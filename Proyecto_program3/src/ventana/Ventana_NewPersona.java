@@ -19,8 +19,10 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 
+import BaseDeDatos.BaseDeDatos;
 import objetos.Alumno;
 import objetos.Persona;
+import objetos.Profesor;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -81,11 +83,12 @@ public class Ventana_NewPersona extends JFrame implements ActionListener{
 	 */
 	public Ventana_NewPersona() {
 		
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Ventana_NewPersona.class.getResource("/ventana/Logo1.JPG")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Ventana_NewPersona.class.getResource("/imagenes/Logo1.JPG")));
 		setResizable(false);
+		setSize(550, 445);
 		setTitle("Nuevo Usuario");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 522, 348);
+		setBounds(100, 100, 550, 346);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -383,6 +386,10 @@ public class Ventana_NewPersona extends JFrame implements ActionListener{
 					fecha = comboDias.getSelectedItem().toString() + "/" + comboMes.getSelectedItem().toString() + "/" + comboAnyo.getSelectedItem().toString();
 					direccion = textField_Calle.getText() + textField_Num.getText() + textField_Piso.getText();
 					telefono = Integer.parseInt(textField_Tlf.getText());
+					BaseDeDatos.crearAlumno(textField_DNI.getText(), textField_Nom.getText().toString(), textField_Ape1.getText().toString(), textField_Ape2.getText().toString(), textField_Ciudad.getText().toString(), textField_Tlf.getText(), textField_UserName.getText().toString(), textField_Cont2.getText().toString());
+					JOptionPane.showMessageDialog(this, "Su usuario ha sido creado con éxito");
+					persona = new Alumno(textField_UserName.getText(), textField_Cont2.getText().toString(), textField_DNI.getText(), textField_Nom.getText(), textField_Ape1.getText() , textField_Ape2.getText(), textField_Ciudad.getText(), textField_Ciudad.getText(), fecha);
+					Ventana_Login.setPersona(persona);
 					//TODO Arreglar
 //					Alumno nuevoAlumno = new Alumno(textField_UserName.getText(), password, textField_DNI.getText(), textField_Nom.getText(), textField_Ape1.getText(), textField_Ape2.getText(),
 //							telefono, direccion, textField_Ciudad.getText(), fecha, false );
@@ -390,6 +397,8 @@ public class Ventana_NewPersona extends JFrame implements ActionListener{
 					 * Ventana_NewAlumno a = new Ventana_NewProfesor(nuevoAlumno);
 					 */				
 					this.dispose();
+					Ventana_Busqueda vb = new Ventana_Busqueda();
+					vb.setVisible(true);
 					}
 
 			}else if(comboProf_Alum.getSelectedItem().toString().equals("Profesor")){				
@@ -429,13 +438,14 @@ public class Ventana_NewPersona extends JFrame implements ActionListener{
 					JOptionPane.showMessageDialog(this, message, "¡Casillas vacías!", JOptionPane.ERROR_MESSAGE);
 
 				}else{
-					// Hay que Coger todos los datos y guardarlos como nuevo Profesor
-					//TODO arreglar
-//					Persona nuevoProfesor = new Persona(textField_UserName.getText(), password, textField_DNI.getText(), textField_Nom.getText(), textField_Ape1.getText(), textField_Ape2.getText(),
-//							telefono, direccion, textField_Ciudad.getText(), fecha, true );
-					//Ventana_NewProfesor vPorfesor = new Ventana_NewProfesor(nuevoProfesor);		
+					BaseDeDatos.crearProfesor(textField_DNI.getText(), textField_Nom.getText().toString(), textField_Ape1.getText().toString(), textField_Ape2.getText().toString(), textField_Ciudad.getText().toString(), textField_Tlf.getText(), textField_UserName.getText().toString(), textField_Cont2.getText().toString());
+					JOptionPane.showMessageDialog(this, "Su usuario ha sido creado con éxito");
+					persona = new Profesor(textField_UserName.getText(), textField_Cont2.getText().toString(), textField_DNI.getText(), textField_Nom.getText(), textField_Ape1.getText() , textField_Ape2.getText(), textField_Ciudad.getText(), textField_Ciudad.getText(), fecha);
+					//TODO guardar la persona y poner como persona en Ventana_Login
+					Ventana_Login.setPersona(persona);
 					this.dispose();
 				}
+				
 			}
 		}
 	}

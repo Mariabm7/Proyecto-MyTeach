@@ -88,7 +88,9 @@ public class Ventana_MenuBase extends JFrame implements ActionListener {
 			ventanaBusqueda.setVisible(true);
 			this.setVisible(false);
 		}else if ( o == btnPerfil ){
-			
+			Ventana_Perfil ventanaPerfil = new Ventana_Perfil(Ventana_Login.getPersona());
+			ventanaPerfil.setVisible(true);
+			this.setVisible(false);
 		}else if (o == btnMensaje){
 			Ventana_Mensajes.crearYMostrarGUI();
 			this.setVisible(false);

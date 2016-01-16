@@ -172,4 +172,13 @@ public class Ventana_Login extends JFrame {
 		}
 
 	}
+
+	public static Persona getPersona() {
+		return persona;
+	}
+
+	public static void setPersona(Persona persona) {
+		Ventana_Login.persona = persona;
+	}
+	
 }

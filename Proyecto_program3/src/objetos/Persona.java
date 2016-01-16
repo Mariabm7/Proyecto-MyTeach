@@ -9,26 +9,22 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import javax.swing.JTextField;
-//Ventana de Jorge y Javi
-//TODO Notificarles mis cambios
+
 public class Persona {
 	
-	private int id;
 	private String userName;
 	private String password;
 	private String dni;
 	private String nombre;
 	private String apellido1;
 	private String apellido2;
-	//TODO No se va a manipular asiq STRING
-	private int telefono; // POSTERIORMENTE CAMBIAR A INT O A LONG
-	private String direccion;
+	private String telefono; 
 	private String ciudad;
-	private Date fechaNacimiento;
+	private String fechaNacimiento;
+	
 	private ArrayList<Mensaje> bandejaEntrada = new ArrayList<Mensaje>();
 	private ArrayList<Mensaje> enviados = new ArrayList<Mensaje>();
-	//TODO Quitar 
-	//private boolean alumnoProfesor; // Alumno = false y Profesor = true
+	
 	/**
 	 * Método que convierte el String que le pasa por parámetro en Date.
 	 * @param fecha Se tratará de un String en el formato "dd/MM/yyyy".
@@ -60,9 +56,9 @@ public class Persona {
 		enviados.add(new Peticion("Petición", "Periquita", "No quiero dar mas clase", "15:00", "12/12/2012", new Boolean(false)));
 	}
 	
-	public Persona( int id ,String userName, String password, String dni, String nombre, String apellido1, String apellido2, int telefono,
-	String direccion, String ciudad, String fechaNacimiento){
-		this.id = id;
+	public Persona( String userName, String password, String dni, String nombre, String apellido1, String apellido2, String telefono,
+	 String ciudad, String fechaNacimiento){
+
 		this.userName = userName;
 		this.password = password;
 		this.dni = dni;
@@ -70,16 +66,26 @@ public class Persona {
 		this.apellido1 = apellido1;
 		this.apellido2 = apellido2;
 		this.telefono = telefono;
-		this.direccion = direccion;
 		this.ciudad = ciudad;
-		this.fechaNacimiento = conseguirFecha(fechaNacimiento);
-		//this.alumnoProfesor = alumnoProfesor;
+		this.fechaNacimiento = fechaNacimiento;
 		//Rellenar el arraylist
 		
 		
 	}
 	
 	
+	public String getDni() {
+		return dni;
+	}
+
+	public void setDni(String dni) {
+		this.dni = dni;
+	}
+
+	public void setFechaNacimiento(String fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+
 	public ArrayList<Mensaje> getBandejaEntrada() {
 		return bandejaEntrada;
 	}
@@ -89,12 +95,6 @@ public class Persona {
 		return enviados;
 	}
 	
-
-	public int getId() {
-		return id;
-	}
-	
-
 	public String getUserName() {
 		return userName;
 	}
@@ -135,11 +135,11 @@ public class Persona {
 		this.apellido2 = apellido2;
 	}
 
-	public int getTelefono() {
+	public String getTelefono() {
 		return telefono;
 	}
 
-	public void setTelefono(int telefono) {
+	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
 
@@ -150,31 +150,31 @@ public class Persona {
 	public void setCiudad(String ciudad) {
 		this.ciudad = ciudad;
 	}
-
-	//TODO Pasar a Jorge y Javi
-	public int getEdad(){
-		 Calendar fechaNacimientoDiaMesAnyo = Calendar.getInstance();
-		 fechaNacimientoDiaMesAnyo.setTime(this.fechaNacimiento);
-		 Calendar fechaNacimiento = new GregorianCalendar(fechaNacimientoDiaMesAnyo.get(Calendar.YEAR), fechaNacimientoDiaMesAnyo.get(Calendar.MONTH), fechaNacimientoDiaMesAnyo.get(Calendar.DAY_OF_MONTH) );
-			Calendar fechaActual = Calendar.getInstance();  
-			int edad = fechaActual.get(Calendar.YEAR) - fechaNacimiento.get(Calendar.YEAR);  
-			if (fechaActual.get(Calendar.MONTH) < fechaNacimiento.get(Calendar.MONTH)) {
-			  edad--;  
-			} else if (fechaActual.get(Calendar.MONTH) == fechaNacimiento.get(Calendar.MONTH)
-			    && fechaActual.get(Calendar.DAY_OF_MONTH) < fechaNacimiento.get(Calendar.DAY_OF_MONTH)) {
-			  edad--;  
-			}
-			return edad;
-	 }
+	
+	
+//	public int getEdad(){
+//		 Calendar fechaNacimientoDiaMesAnyo = Calendar.getInstance();
+//		 fechaNacimientoDiaMesAnyo.setTime(this.fechaNacimiento);
+//		 Calendar fechaNacimiento = new GregorianCalendar(fechaNacimientoDiaMesAnyo.get(Calendar.YEAR), fechaNacimientoDiaMesAnyo.get(Calendar.MONTH), fechaNacimientoDiaMesAnyo.get(Calendar.DAY_OF_MONTH) );
+//			Calendar fechaActual = Calendar.getInstance();  
+//			int edad = fechaActual.get(Calendar.YEAR) - fechaNacimiento.get(Calendar.YEAR);  
+//			if (fechaActual.get(Calendar.MONTH) < fechaNacimiento.get(Calendar.MONTH)) {
+//			  edad--;  
+//			} else if (fechaActual.get(Calendar.MONTH) == fechaNacimiento.get(Calendar.MONTH)
+//			    && fechaActual.get(Calendar.DAY_OF_MONTH) < fechaNacimiento.get(Calendar.DAY_OF_MONTH)) {
+//			  edad--;  
+//			}
+//			return edad;
+//	 }
 		
 	public static void main(String[] args) {
-		Persona persona = new Persona(001, "PepaPig", "pipi", "12345678A", "Pepa", "Pig", "Pam", 944444444, "La republica independiente d emi casa", "Mi Casa", "07/07/1996");
-		//System.out.println(persona.getEdad());
+		Persona persona = new Persona( "PepaPig", "pipi", "12345678A", "Pepa", "Pig", "Pam", "944444444", "Mi Casa", "07/07/1996");
+//		System.out.println(persona.getEdad());
 		System.out.println(persona.getFechaNacimiento().toString());
 		
 	}
 
-	public Date getFechaNacimiento() {
+	public String getFechaNacimiento() {
 		return fechaNacimiento;
 	}
 

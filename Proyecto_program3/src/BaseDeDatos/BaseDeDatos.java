@@ -1,11 +1,13 @@
 package BaseDeDatos;
 
+import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import objetos.Persona;
 
@@ -79,22 +81,44 @@ public class BaseDeDatos {
 	// ------------
 	// PARTICULAR 
 	// ------------
-	public static void busquedaBD(){
-		
-	}
 	
-	public static void crearPersona(int id, String nombre, String apellido1, String apellido2, String ciudad, int telefono, String usuario, String contrasena){
-		Connection c = initBD("bd.db");
+	public static void crearAlumno(String id, String nombre, String apellido1, String apellido2, String ciudad, String telefono, String usuario, String contrasena){
+		Connection c = initBD("data/bd.db");
 		
 		try {
 			PreparedStatement s = c.prepareStatement("INSERT INTO alumnos VALUES (?,?,?,?,?,?,?,?)");
 			
-			s.setString(1,Integer.toString(id));
+			s.setString(1,id);
 			s.setString(2,nombre);
 			s.setString(3,apellido1);
 			s.setString(4,apellido2);
 			s.setString(5,ciudad);
-			s.setString(6,Integer.toString(telefono));
+			s.setString(6,telefono);
+			s.setString(7,usuario);
+			s.setString(8,contrasena);
+			
+			
+			s.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		}
+		
+	}
+	
+	public static void crearProfesor(String id, String nombre, String apellido1, String apellido2, String ciudad, String telefono, String usuario, String contrasena){
+		Connection c = initBD("data/bd.db");
+		
+		try {
+			PreparedStatement s = c.prepareStatement("INSERT INTO profesor VALUES (?,?,?,?,?,?,?,?)");
+			
+			s.setString(1,id);
+			s.setString(2,nombre);
+			s.setString(3,apellido1);
+			s.setString(4,apellido2);
+			s.setString(5,ciudad);
+			s.setString(6,telefono);
 			s.setString(7,usuario);
 			s.setString(8,contrasena);
 			
@@ -109,7 +133,7 @@ public class BaseDeDatos {
 	}
 
 	public static void guardarAlumno(Persona p) {
-		Connection c = initBD("bd.db");
+		Connection c = initBD("data/bd.db");
 
 		try {
 			PreparedStatement s = c.prepareStatement("UPDATE alumnos SET nombre = ?, apellido1 = ?, apellido2 = ?, ciudad = ?, telefono = ?, usuario = ?, contrasena = ? WHERE id = ? )");
@@ -118,10 +142,10 @@ public class BaseDeDatos {
 			s.setString(2, p.getApellido1());
 			s.setString(3, p.getApellido2());
 			s.setString(4, p.getCiudad());
-			s.setString(5, Integer.toString(p.getTelefono()));
+			s.setString(5, p.getTelefono());
 			s.setString(6, p.getUserName());
 			s.setString(7, p.getPassword());
-			s.setString(8, Integer.toString(p.getId()));
+			s.setString(8, p.getDni());
 			
 			s.executeUpdate();
 
@@ -132,39 +156,210 @@ public class BaseDeDatos {
 		
 	}
 	public static boolean comprobarContrasena(String usuario, String contrasena){
-		Connection c = initBD("bd.db");
+		Connection c = initBD("data/bd.db");
 		boolean correcto = false ;
+		ResultSet rs = null;
 		try {
-			PreparedStatement s1 = c.prepareStatement("SELECT usuario FROM alumnos WHERE usuario = ? ");
+			PreparedStatement s1 = c.prepareStatement("SELECT contrasena FROM alumnos WHERE usuario = ? ");
 			s1.setString(1, usuario);
-			if (s1.equals(usuario)){
-				PreparedStatement s2 = c.prepareStatement("SELECT contrasena FROM alumnos WHERE contrasena = ? ");
-				s2.setString(1, contrasena);
-				if (s2.equals(contrasena)){
-					correcto = true;
-				}else{
-					correcto = false;
-				}
-			}
+			rs = s1.executeQuery();
+			 if(rs.next()){
+				 if(rs.getString("contrasena").equals(contrasena)){
+					 correcto = true;
+				 }
+			 }
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return correcto;
 			
 	}
-	//TODO mensajes bandeja de entrada y enviados
-	public static void busqueda(String tipo, String ciudad, String asignatura, String idioma, String nivel){
-		Connection c = initBD("bd.bd");
-		
+	
+	public static ArrayList<String> busquedaColegio(String ciudad, String asignatura, String idioma, String nivel){
+		Connection c = initBD("data/bd.db");
+		ResultSet rs = null;
+		ArrayList<String> id_profs = conseguirIdProfesorCiudad(ciudad);
+		ArrayList<String> id_profs_correctos = new ArrayList<String>();
 		try {
-			PreparedStatement s = c.prepareStatement("");
-			PreparedStatement s1 = c.prepareStatement("SELECT tipo FROM alumnos WHERE tipo = ?");
-			s.setString(1, tipo);
-			//TODO inacabado
+			for(String id : id_profs){
+				PreparedStatement s = c.prepareStatement("SELECT id_prof FROM clases WHERE id_prof = ? AND asignatura = ? AND idioma = ? AND nivel = ? ");
+				s.setString(1, id);
+				s.setString(2, asignatura);
+				s.setString(3, idioma);
+				s.setString(4, nivel);
+				rs = s.executeQuery();
+				if(rs.next()){
+					id_profs_correctos.add(id);
+				}
+			}
+			
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
+		return id_profs_correctos;
+	}
+	public static ArrayList<String> busquedaEscuelaDeIdiomas(String ciudad, String idioma, String nivel){
+		Connection c = initBD("data/bd.db");
+		ResultSet rs = null;
+		ArrayList<String> id_profs = conseguirIdProfesorCiudad(ciudad);
+		ArrayList<String> id_profs_correctos = new ArrayList<String>();
+		try {
+			for(String id : id_profs){
+				PreparedStatement s = c.prepareStatement("SELECT id_prof FROM clases WHERE id_prof = ? AND idioma = ? AND nivel = ? ");
+				s.setString(1, id);
+				s.setString(2, idioma);
+				s.setString(3, nivel);
+				rs = s.executeQuery();
+				if(rs.next()){
+					id_profs_correctos.add(id);
+				}
+			}
+			
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return id_profs_correctos;
+	}
+	public static ArrayList<String> conseguirIdProfesorCiudad(String ciudad){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		ArrayList<String> ids = new ArrayList<String>();
+		try {
+			s = c.prepareStatement("SELECT id FROM profesor WHERE ciudad = ?"); 
+			s.setString(1, ciudad);
+			rs = s.executeQuery();
+			while(rs.next()){
+				ids.add(rs.getString("id"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return ids;
+	}
+	//TODO era aqui donde habia que hacer arraylist??
+	private ArrayList<String> prof_nombre;
+	private ArrayList<String> prof_Apellido;
+	//
+	public static ArrayList<String> conseguirIdProfesorNombre(ArrayList<String> id_prof){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		ArrayList<String> nombres = new ArrayList<String>();
+		try {
+			for (String id : id_prof) {
+				s = c.prepareStatement("SELECT nombre FROM profesor WHERE id = ?");
+				s.setString(1, id);
+				rs = s.executeQuery();
+				nombres.add(rs.getString("nombre"));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return nombres;
+	}
+	public static ArrayList<String> conseguirIdProfesorApellidos(ArrayList<String> id_prof){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		ArrayList<String> apellidos = new ArrayList<String>();
+		try {
+			for (String id : id_prof) {
+				s = c.prepareStatement("SELECT apellido1, apellido2 FROM profesor WHERE id = ?");
+				s.setString(1, id);
+				rs = s.executeQuery();
+				apellidos.add(rs.getString("apellido1")+" "+ rs.getString("apellido2"));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return apellidos;
 	}
 	
+	//TODO mensajes bandeja de entrada y enviados
+	public static String conseguirIdAlumno(String usuario){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+			s = c.prepareStatement("SELECT id FROM alumnos WHERE usuario = ?"); 
+			s.setString(1, usuario);
+			rs = s.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+		try {
+			return rs.getString("id");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public static String conseguirIdProfesor(String usuario){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+			s = c.prepareStatement("SELECT id FROM profesor WHERE usuario = ?"); 
+			s.setString(1, usuario);
+			rs = s.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			return rs.getString("id");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public static void mensajeAProfesor(String usuarioAlum, String usuarioProf, String contenido, String asunto, String tipo){
+		String idAlumno = conseguirIdAlumno(usuarioAlum);
+		String idProfesor = conseguirIdAlumno(usuarioProf);
+		Connection c = initBD("data/bd.db");
+		try {
+			PreparedStatement s = c.prepareStatement("INSERT INTO mensaje VALUES (?,?,?,?,?)"); 
+			s.setString(1, idAlumno);
+			s.setString(2, idProfesor);
+			s.setString(3, contenido);
+			s.setString(4, asunto);
+			s.setString(5, tipo);
+			s.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+	}
+	public static void mensajeAAlumno(String usuarioAlum, String usuarioProf, String contenido, String asunto, String tipo){
+		String idAlumno = conseguirIdAlumno(usuarioAlum);
+		String idProfesor = conseguirIdAlumno(usuarioProf);
+		Connection c = initBD("data/bd.db");
+		try {
+			PreparedStatement s = c.prepareStatement("INSERT INTO mensaje VALUES (?,?,?,?,?)"); 
+			s.setString(1, idProfesor);
+			s.setString(2, idAlumno);
+			s.setString(3, contenido);
+			s.setString(4, asunto);
+			s.setString(5, tipo);
+			s.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+	}
+	//TODO borrar mensaje de bd y buscar id
+	public static void borrarMensaje (int id){
+		Connection c = initBD("data/bd.db");
+		try {
+			PreparedStatement s = c.prepareStatement("DELETE FROM mensaje WHERE id = ?"); 
+			s.setInt(1, id);
+			s.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

@@ -84,6 +84,12 @@ public class MiTableModel extends AbstractTableModel{
   		return columnasEditables[col];
   	else return false;
   }
+  
+  public void setCellEditable (int col, boolean edit){
+	  if (col >= 0 && col < columnasEditables.length){
+		  columnasEditables[col] = edit; 
+	  }  
+  }
 
   /* [01] MODELO: Método que sólo hay que implementar si la tabla
    * puede cambiar (editar) valores de sus celdas

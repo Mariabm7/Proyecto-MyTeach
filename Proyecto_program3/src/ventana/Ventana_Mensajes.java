@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 
 
 
+
 import java.awt.Dimension;
 
 
@@ -52,6 +53,8 @@ public class Ventana_Mensajes extends JTable {
 	// Modelo de datos propio
 	private static MiTableModel datos;
 	private static MiTableModel datos2;
+	private static boolean bandeja;  //true --> BandejaDeEntrada     
+									 //false --> Enviados
 
 	// [02] Renderers para alinear distinto que a la izquierda
 	private static DefaultTableCellRenderer rendererDerecha = new DefaultTableCellRenderer();
@@ -120,7 +123,8 @@ public class Ventana_Mensajes extends JTable {
 	public static void crearYMostrarGUI() {
 
 		// CODIGO NUEVO MENSAJE
-
+		bandeja = true;
+		
 		panelNuevoMensaje = new JPanel();
 		panelNuevoMensaje.setBounds(161, 33, 517, 383);
 		panelNuevoMensaje.setLayout(null);
@@ -234,30 +238,51 @@ public class Ventana_Mensajes extends JTable {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Eliminar");
 				int result = JOptionPane.showConfirmDialog(null,
-						"Are you sure you wish to exit application?", null,
+						"¿Está seguro de que desea eliminar?", null,
 						JOptionPane.YES_NO_OPTION);
 				if (result == JOptionPane.YES_OPTION) {
 					if (tabla.getSelectedRow() >= 0
 							&& tabla.getSelectedRow() < datos.getRowCount()) {
-						for (int i = datos.getRowCount() - 1; i >= 0; i--) {
-							if ((boolean) datos.getValueAt(i, 5)) {
-								// TODO Borrar en el arraylist y en la base de
-								// datos
-								datos.borrar(i);
+						if (bandeja) { //Con BandejaDeEntrada
+							for (int i = datos.getRowCount() - 1; i >= 0; i--) {
+								if ((boolean) datos.getValueAt(i, 5)) {
+									// TODO Borrar en el arraylist y en la base
+									// de
+									// datos
+									datos.borrar(i);
+								}
+							}
+						}else{ //Con Enviados
+							for (int i = datos2.getRowCount() - 1; i >= 0; i--) {
+								if ((boolean) datos2.getValueAt(i, 5)) {
+									// TODO Borrar en el arraylist y en la base
+									// de
+									// datos
+									datos2.borrar(i);
+									
+								}
 							}
 						}
 						tabla.updateUI();
 					} else {
 						JOptionPane.showMessageDialog(null,
-								"Selecciona una fila antes de borrarla",
+								"Selecciona una fila antes de pulsar Eliminar",
 								"Error en borrado",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
 				if (result == JOptionPane.NO_OPTION) {
-					for (int i = datos.getRowCount() - 1; i >= 0; i--) {
-						if ((boolean) datos.getValueAt(i, 5)) {
-							datos.setValueAt(false, i, 5);
+					if (bandeja) { // Con BandejaDeEntrada
+						for (int i = datos.getRowCount() - 1; i >= 0; i--) {
+							if ((boolean) datos.getValueAt(i, 5)) {
+								datos.setValueAt(false, i, 5);
+							}
+						}
+					} else { //Con enviados
+						for (int i = datos2.getRowCount() - 1; i >= 0; i--) {
+							if ((boolean) datos2.getValueAt(i, 5)) {
+								datos2.setValueAt(false, i, 5);
+							}
 						}
 					}
 				}
@@ -291,7 +316,8 @@ public class Ventana_Mensajes extends JTable {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO Ventana de Enara
+				Ventana_Perfil ventanaPerfil = new Ventana_Perfil(Ventana_Login.getPersona());
+				ventanaPerfil.setVisible(true);
 				frame.setVisible(false);
 			}
 		});
@@ -357,6 +383,7 @@ public class Ventana_Mensajes extends JTable {
 				panelNuevoMensaje.setVisible(false);
 				panelBandejaEntrada.setVisible(true);
 				tabla.setModel(datos);
+				bandeja = true;
 			}
 		});
 		panelBotonera.add(btnBandejaDeEntrada);
@@ -372,7 +399,7 @@ public class Ventana_Mensajes extends JTable {
 				panelBandejaEntrada.setVisible(true);
 				panelNuevoMensaje.setVisible(false);
 				tabla.setModel(datos2);
-				
+				bandeja = false;
 				
 			}
 		});
@@ -407,7 +434,9 @@ public class Ventana_Mensajes extends JTable {
         frame.setVisible(true);
 	}
 	
-	//TODO Hacerlo como el boton eliminar
+	
+	
+	//TODO Hacerlo como el boton eliminar en Envia
 	
 	public static void main(String[] args) {
 	       // Mandar trabajo a Swing

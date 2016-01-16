@@ -6,10 +6,13 @@ import javax.swing.JPanel;
 
 import javax.swing.JButton;
 
+import java.awt.color.CMMException;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -20,6 +23,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -33,6 +37,7 @@ import javax.swing.JCheckBox;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
+import BaseDeDatos.BaseDeDatos;
 import objetos.DatoParaTabla;
 import objetos.MiTableModel;
 
@@ -148,6 +153,18 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		lblAsignatura.setFont(new Font("Tahoma", Font.BOLD, 12));
 		
 		txtAsignatura = new JTextField();
+		txtAsignatura.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				if (!(txtCiudad.getText().equals("")) && !(txtAsignatura.getText().equals("")) && !(comboBox_IdiomaColegio.getSelectedItem().toString().equals("- Elija idioma -")) && (rdbtnPrimaria.isSelected() || rdbtnEso.isSelected() || rdbtnBachillerato.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Colegio")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent arg0) {}
+			@Override
+			public void keyPressed(KeyEvent arg0) {}
+		});
 		txtAsignatura.setBounds(91, 9, 167, 20);
 		panel_colegio.add(txtAsignatura);
 		txtAsignatura.setColumns(10);
@@ -158,16 +175,42 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		lblNivel.setFont(new Font("Tahoma", Font.BOLD, 12));
 		
 		rdbtnPrimaria = new JRadioButton("Primaria");
-		rdbtnPrimaria.setBounds(71, 39, 71, 23);
+		rdbtnPrimaria.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!(txtCiudad.getText().equals("")) && !(txtAsignatura.getText().equals("")) && !(comboBox_IdiomaColegio.getSelectedItem().toString().equals("- Elija idioma -")) && (rdbtnPrimaria.isSelected() || rdbtnEso.isSelected() || rdbtnBachillerato.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Colegio")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+		});
+		rdbtnPrimaria.setBounds(71, 39, 77, 23);
 		rdbtnPrimaria.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		rdbtnPrimaria.setBackground(Color.LIGHT_GRAY);
 		
 		rdbtnEso = new JRadioButton("ESO");
-		rdbtnEso.setBounds(181, 40, 52, 23);
+		rdbtnEso.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!(txtCiudad.getText().equals("")) && !(txtAsignatura.getText().equals("")) && !(comboBox_IdiomaColegio.getSelectedItem().toString().equals("- Elija idioma -")) && (rdbtnPrimaria.isSelected() || rdbtnEso.isSelected() || rdbtnBachillerato.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Colegio")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+		});
+		rdbtnEso.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		rdbtnEso.setBounds(181, 40, 59, 23);
 		rdbtnEso.setBackground(Color.LIGHT_GRAY);
 		
 		rdbtnBachillerato = new JRadioButton("Bachillerato");
-		rdbtnBachillerato.setBounds(266, 40, 97, 23);	
+		rdbtnBachillerato.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!(txtCiudad.getText().equals("")) && !(txtAsignatura.getText().equals("")) && !(comboBox_IdiomaColegio.getSelectedItem().toString().equals("- Elija idioma -")) && (rdbtnPrimaria.isSelected() || rdbtnEso.isSelected() || rdbtnBachillerato.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Colegio")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+		});
+		rdbtnBachillerato.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		rdbtnBachillerato.setBounds(266, 40, 108, 23);	
 		rdbtnBachillerato.setBackground(Color.LIGHT_GRAY);
 		
 		bg = new ButtonGroup();
@@ -184,6 +227,21 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		lblIdioma.setFont(new Font("Tahoma", Font.BOLD, 12));
 		
 		comboBox_IdiomaColegio = new JComboBox<String>();
+		comboBox_IdiomaColegio.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				comboBox_Idioma.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rbtnA1.isSelected() || rbtnA2.isSelected() || rbtnB1.isSelected()|| rbtnB2.isSelected() || rbtnC1.isSelected() || rbtnC2.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Escuela de idiomas")){
+							btnBuscar.setEnabled(true);
+						}else if (!(txtCiudad.getText().equals("")) && !(txtAsignatura.getText().equals("")) && !(comboBox_IdiomaColegio.getSelectedItem().toString().equals("- Elija idioma -")) && (rdbtnPrimaria.isSelected() || rdbtnEso.isSelected() || rdbtnBachillerato.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Colegio")){
+							btnBuscar.setEnabled(true);
+						}
+					}
+				});
+			}
+		});
 		comboBox_IdiomaColegio.setBounds(334, 9, 146, 20);
 		panel_colegio.add(comboBox_IdiomaColegio);
 		comboBox_IdiomaColegio.setModel(new DefaultComboBoxModel<String>(new String[] {"- Elija idioma -", "Euskera", "Ingl\u00E9s", "Franc\u00E9s", "Alem\u00E1n"}));
@@ -200,6 +258,16 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		lblIdioma_1.setFont(new Font("Tahoma", Font.BOLD, 12));
 		
 		comboBox_Idioma = new JComboBox<String>();
+		comboBox_Idioma.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rbtnA1.isSelected() || rbtnA2.isSelected() || rbtnB1.isSelected()|| rbtnB2.isSelected() || rbtnC1.isSelected() || rbtnC2.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Escuela de idiomas")){
+					btnBuscar.setEnabled(true);
+				}else if (!(txtCiudad.getText().equals("")) && !(txtAsignatura.getText().equals("")) && !(comboBox_IdiomaColegio.getSelectedItem().toString().equals("- Elija idioma -")) && (rdbtnPrimaria.isSelected() || rdbtnEso.isSelected() || rdbtnBachillerato.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Colegio")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+		});
 		comboBox_Idioma.setModel(new DefaultComboBoxModel<String>(new String[] {"- Elija idioma -", "Euskera", "Espa\u00F1ol", "Ingl\u00E9s", "Franc\u00E9s", "Alem\u00E1n", "Italiano", "Chino", "Japon\u00E9s", "Ruso"}));
 		comboBox_Idioma.setBounds(66, 9, 108, 20);
 		panel_escuelaDeIdiomas.add(comboBox_Idioma);
@@ -210,26 +278,74 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		panel_escuelaDeIdiomas.add(lblNivel_1);
 		
 		rbtnA1 = new JRadioButton("A1");
+		rbtnA1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rbtnA1.isSelected() || rbtnA2.isSelected() || rbtnB1.isSelected()|| rbtnB2.isSelected() || rbtnC1.isSelected() || rbtnC2.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Escuela de idiomas")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+		});
 		rbtnA1.setBackground(Color.LIGHT_GRAY);
 		rbtnA1.setBounds(258, 8, 47, 23);
 
 		rbtnA2 = new JRadioButton("A2");
+		rbtnA2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rbtnA1.isSelected() || rbtnA2.isSelected() || rbtnB1.isSelected()|| rbtnB2.isSelected() || rbtnC1.isSelected() || rbtnC2.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Escuela de idiomas")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+		});
 		rbtnA2.setBackground(Color.LIGHT_GRAY);
 		rbtnA2.setBounds(258, 34, 47, 23);
 	
 		rbtnB1 = new JRadioButton("B1");
+		rbtnB1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rbtnA1.isSelected() || rbtnA2.isSelected() || rbtnB1.isSelected()|| rbtnB2.isSelected() || rbtnC1.isSelected() || rbtnC2.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Escuela de idiomas")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+		});
 		rbtnB1.setBackground(Color.LIGHT_GRAY);
 		rbtnB1.setBounds(331, 8, 46, 23);
 
 		rbtnB2 = new JRadioButton("B2");
+		rbtnB2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rbtnA1.isSelected() || rbtnA2.isSelected() || rbtnB1.isSelected()|| rbtnB2.isSelected() || rbtnC1.isSelected() || rbtnC2.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Escuela de idiomas")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+		});
 		rbtnB2.setBackground(Color.LIGHT_GRAY);
 		rbtnB2.setBounds(331, 34, 46, 23);
 
 		rbtnC1 = new JRadioButton("C1");
+		rbtnC1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rbtnA1.isSelected() || rbtnA2.isSelected() || rbtnB1.isSelected()|| rbtnB2.isSelected() || rbtnC1.isSelected() || rbtnC2.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Escuela de idiomas")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+		});
 		rbtnC1.setBackground(Color.LIGHT_GRAY);
 		rbtnC1.setBounds(404, 9, 46, 20);
 
 		rbtnC2 = new JRadioButton("C2");
+		rbtnC2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rbtnA1.isSelected() || rbtnA2.isSelected() || rbtnB1.isSelected()|| rbtnB2.isSelected() || rbtnC1.isSelected() || rbtnC2.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Escuela de idiomas")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+		});
 		rbtnC2.setBackground(Color.LIGHT_GRAY);
 		rbtnC2.setBounds(404, 38, 46, 19);
 
@@ -253,6 +369,20 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		panelBotonera.add(lblCiudad);
 		
 		txtCiudad = new JTextField();
+		txtCiudad.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rbtnA1.isSelected() || rbtnA2.isSelected() || rbtnB1.isSelected()|| rbtnB2.isSelected() || rbtnC1.isSelected() || rbtnC2.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Escuela de idiomas")){
+					btnBuscar.setEnabled(true);
+				}else if (!(txtCiudad.getText().equals("")) && !(txtAsignatura.getText().equals("")) && !(comboBox_IdiomaColegio.getSelectedItem().toString().equals("- Elija idioma -")) && (rdbtnPrimaria.isSelected() || rdbtnEso.isSelected() || rdbtnBachillerato.isSelected()) && comboBox_tipo.getSelectedItem().toString().equals("Colegio")){
+					btnBuscar.setEnabled(true);
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent arg0) {}
+			@Override
+			public void keyPressed(KeyEvent arg0) {}
+		});
 		txtCiudad.setBounds(343, 9, 149, 20);
 		panelBotonera.add(txtCiudad);
 		txtCiudad.setColumns(10);
@@ -263,6 +393,7 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				panel_tabla.setVisible(true);
+				hacerBusqueda();
 			}
 		});
 		btnBuscar.setBounds(400, 111, 89, 23);
@@ -285,6 +416,18 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		btnMandarPeticion.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				if (tabla.getSelectedRow() >= 0 && tabla.getSelectedRow() < datos.getRowCount() ) {
+					//TODO Coger el usuario y mandarle un mensaje
+					//Para poner no editable la columna
+					//datos.setCellEditable(2, false);
+					
+					//datos.borrar( tabla.getSelectedRow());
+					tabla.updateUI();
+				} else {
+					JOptionPane.showMessageDialog( null, 
+							"Selecciona una fila antes de borrarla", "Error en borrado", 
+							JOptionPane.INFORMATION_MESSAGE );
+				}
 			}
 		});
 		btnMandarPeticion.setBounds(317, 241, 167, 23);
@@ -302,15 +445,13 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 				}else if (comboBox_tipo.getSelectedItem().toString().equals("Colegio")){
 					panel_escuelaDeIdiomas.setVisible(false);
 					panel_colegio.setVisible(true);
-					//TODO no se porque no me funciona
-					if (!(txtCiudad.getText().equals("")) && !(comboBox_IdiomaColegio.getSelectedItem().toString().equals("- Elija idioma -")) && (rdbtnPrimaria.isSelected() || rdbtnEso.isSelected() || rdbtnBachillerato.isSelected())){
+					if (!(txtCiudad.getText().equals("")) && !(txtAsignatura.getText().equals("")) && !(comboBox_IdiomaColegio.getSelectedItem().toString().equals("- Elija idioma -")) && (rdbtnPrimaria.isSelected() || rdbtnEso.isSelected() || rdbtnBachillerato.isSelected())){
 						btnBuscar.setEnabled(true);
 					}
 				} else{
 					panel_colegio.setVisible(false);
 					panel_escuelaDeIdiomas.setVisible(true);
-					//TODO no se porque no me funciona
-					if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rdbtnPrimaria.isSelected() || rdbtnEso.isSelected() || rdbtnBachillerato.isSelected())){
+					if (!(txtCiudad.getText().equals("")) && !(comboBox_Idioma.getSelectedItem().toString().equals("- Elija idioma -")) && (rbtnA1.isSelected() || rbtnA2.isSelected() || rbtnB1.isSelected()|| rbtnB2.isSelected() || rbtnC1.isSelected() || rbtnC2.isSelected())){
 						btnBuscar.setEnabled(true);
 					}
 				}
@@ -330,7 +471,8 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 			ventanaBusqueda.setVisible(true);
 			this.setVisible(false);
 		} else if (o == btnPerfil) {
-			//TODO Ventana de Enara
+			Ventana_Perfil ventanaPerfil = new Ventana_Perfil(Ventana_Login.getPersona());
+			ventanaPerfil.setVisible(true);
 			this.setVisible(false);
 		} else if (o == btnMensaje) {
 			System.out.println("Mensajes");
@@ -344,11 +486,51 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 
 	}
 	
+	public String getSelectedColegio(){
+		if (rdbtnPrimaria.isSelected()){
+			return rdbtnPrimaria.getText();
+		}else if (rdbtnEso.isSelected()){
+			return rdbtnEso.getText();
+		}else if(rdbtnBachillerato.isSelected()){
+			return rdbtnBachillerato.getText();
+		}
+		return "";
+	}
+	public String getSelectedEscuelaDeIdiomas(){
+		if (rbtnA1.isSelected()){
+			return rbtnA1.getText();
+		}else if (rbtnA2.isSelected()){
+			return rbtnA2.getText();
+		}else if(rbtnB1.isSelected()){
+			return rbtnB1.getText();
+		}else if(rbtnB2.isSelected()){
+			return rbtnB2.getText();
+		}else if(rbtnC1.isSelected()){
+			return rbtnC1.getText();
+		}else if(rbtnC2.isSelected()){
+			return rbtnC2.getText();
+		}
+		return "";
+	}
 	public void hacerBusqueda(){
 		if (comboBox_tipo.getSelectedItem().equals("Colegio") ){
-			
+			ArrayList<String> id_prof = BaseDeDatos.busquedaColegio(txtCiudad.getText(), txtAsignatura.getText(), comboBox_IdiomaColegio.getSelectedItem().toString(), getSelectedColegio());
+			ArrayList<String> id_nombre = BaseDeDatos.conseguirIdProfesorNombre(id_prof);
+			ArrayList<String> id_apellido = BaseDeDatos.conseguirIdProfesorApellidos(id_prof);
+			for (int i = 0; i < id_prof.size(); i++){
+				System.out.println("Colegio --> id: "+ id_prof.get(i) + "nombre" + id_nombre.get(i)+ "Apellidos: " + id_apellido.get(i));
+				datos.insertar(new Linea(id_nombre.get(i), id_apellido.get(i), false));
+			}
+			tabla.updateUI();
 		}else if (comboBox_tipo.getSelectedItem().equals("Escuela de idiomas")){
-			
+			ArrayList<String> id_prof = BaseDeDatos.busquedaEscuelaDeIdiomas(txtCiudad.getText(), comboBox_Idioma.getSelectedItem().toString(), getSelectedEscuelaDeIdiomas());
+			ArrayList<String> id_nombre = BaseDeDatos.conseguirIdProfesorNombre(id_prof);
+			ArrayList<String> id_apellido = BaseDeDatos.conseguirIdProfesorApellidos(id_prof);
+			for (int i = 0; i < id_prof.size(); i++){
+				System.out.println("Escuela de Idiomas --> id: "+ id_prof.get(i) + "nombre" + id_nombre.get(i)+ "Apellidos: " + id_apellido.get(i));
+				datos.insertar(new Linea(id_nombre.get(i), id_apellido.get(i), false));
+			}
+			tabla.updateUI();
 		}
 	}
 	public static void main(String[] args) {
