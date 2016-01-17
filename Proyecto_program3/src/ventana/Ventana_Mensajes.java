@@ -8,6 +8,9 @@ import javax.swing.JPanel;
 
 
 
+
+
+
 import java.awt.Dimension;
 
 
@@ -20,6 +23,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.Font;
 
 import javax.swing.ImageIcon;
@@ -67,8 +72,6 @@ public class Ventana_Mensajes extends JTable {
 	private static JPanel panelNuevoMensaje;
 	private static JLabel lblPara;
 	private static JTextField txtPara;
-	private static JLabel lblDe;
-	private static JTextField txtDe;
 	private static JLabel lblAsunto;
 	private static JTextField txtAsunto;
 	private static JLabel lblMensaje;
@@ -81,16 +84,22 @@ public class Ventana_Mensajes extends JTable {
 	private static JButton btnPerfil;
 	private static JButton btnMensaje;
 	private static JButton btnAtras;
+	
 	private static JPanel panelBotonera;
 	private static JButton btnNuevoMensaje;
 	private static JButton btnBandejaDeEntrada;
 	private static JButton btnEnviados;
 	private static JPanel panelBandejaEntrada;
 	private static JButton btnEliminar;
-	private static JTable table;
 	private static JScrollPane scrollPane;
-	private TableModel tableMode;
 	private static Ventana_Mensajes tabla;
+	
+	//Componentes ver Contenido
+	private static JPanel panel_contenido;
+	private static JLabel lblDe;
+	private static JLabel lblAsuntoContenido;
+	private static JLabel lblMensajeContenido;
+	private static JTextArea txtMensajeContenido;
 
 	public Ventana_Mensajes(MiTableModel modelo) {
 		super(modelo);
@@ -139,24 +148,14 @@ public class Ventana_Mensajes extends JTable {
 		panelNuevoMensaje.add(txtPara);
 		txtPara.setColumns(10);
 
-		lblDe = new JLabel("De parte de: ");
-		lblDe.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblDe.setBounds(28, 83, 74, 14);
-		panelNuevoMensaje.add(lblDe);
-
-		txtDe = new JTextField();
-		txtDe.setColumns(10);
-		txtDe.setBounds(117, 81, 345, 20);
-		panelNuevoMensaje.add(txtDe);
-
 		lblAsunto = new JLabel("Asunto: ");
 		lblAsunto.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblAsunto.setBounds(28, 137, 55, 14);
+		lblAsunto.setBounds(28, 100, 55, 14);
 		panelNuevoMensaje.add(lblAsunto);
 
 		txtAsunto = new JTextField();
 		txtAsunto.setColumns(10);
-		txtAsunto.setBounds(117, 135, 345, 20);
+		txtAsunto.setBounds(117, 100, 345, 20);
 		panelNuevoMensaje.add(txtAsunto);
 
 		lblMensaje = new JLabel("Mensaje:");
@@ -211,6 +210,39 @@ public class Ventana_Mensajes extends JTable {
 		// table.setBounds(491, 252, -486, -211);
 		// panelBandejaEntrada.add(table);
 		tabla = new Ventana_Mensajes(datos);
+		tabla.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+
+			@Override
+			public void mousePressed(MouseEvent e) {}
+
+			@Override
+			public void mouseExited(MouseEvent e) {}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = tabla.getSelectedRow();
+				if (bandeja) { //Con BandejaDeEntrada
+					lblDe.setText("De:  "+ datos.getValueAt(row, 1));
+					lblAsuntoContenido.setText("Asunto:  "+ datos.getValueAt(row, 2));
+					//TODO txtMensajeContenido.setText();
+					panelBandejaEntrada.setVisible(false);
+					panel_contenido.setVisible(true);
+				}else{ //Con Enviados
+					lblDe.setText("De:  "+ datos2.getValueAt(row, 1));
+					lblAsuntoContenido.setText("Asunto:  "+ datos2.getValueAt(row, 2));
+					//TODO txtMensajeContenido.setText();
+					panelBandejaEntrada.setVisible(false);
+					panel_contenido.setVisible(true);
+				}
+				
+			}
+		});
 		scrollPane = new JScrollPane(tabla);
 		scrollPane.setBounds(10, 11, 497, 320);
 
@@ -228,7 +260,7 @@ public class Ventana_Mensajes extends JTable {
 		panelBandejaEntrada.setLayout(null);
 
 		panelBandejaEntrada.add(scrollPane);
-
+		
 		// btnEliminar
 		btnEliminar = new JButton("ELIMINAR");
 		btnEliminar.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -246,18 +278,14 @@ public class Ventana_Mensajes extends JTable {
 						if (bandeja) { //Con BandejaDeEntrada
 							for (int i = datos.getRowCount() - 1; i >= 0; i--) {
 								if ((boolean) datos.getValueAt(i, 5)) {
-									// TODO Borrar en el arraylist y en la base
-									// de
-									// datos
+									// TODO Borrar en el arraylist y en la base de datos
 									datos.borrar(i);
 								}
 							}
 						}else{ //Con Enviados
 							for (int i = datos2.getRowCount() - 1; i >= 0; i--) {
 								if ((boolean) datos2.getValueAt(i, 5)) {
-									// TODO Borrar en el arraylist y en la base
-									// de
-									// datos
+									// TODO Borrar en el arraylist y en la base de datos
 									datos2.borrar(i);
 									
 								}
@@ -316,7 +344,7 @@ public class Ventana_Mensajes extends JTable {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Ventana_Perfil ventanaPerfil = new Ventana_Perfil(Ventana_Login.getPersona());
+				Ventana_Perfil ventanaPerfil = new Ventana_Perfil();
 				ventanaPerfil.setVisible(true);
 				frame.setVisible(false);
 			}
@@ -369,6 +397,7 @@ public class Ventana_Mensajes extends JTable {
 			public void actionPerformed(ActionEvent arg0) {
 				panelNuevoMensaje.setVisible(true);
 				panelBandejaEntrada.setVisible(false);
+				panel_contenido.setVisible(false);
 			}
 		});
 		panelBotonera.add(btnNuevoMensaje);
@@ -381,6 +410,7 @@ public class Ventana_Mensajes extends JTable {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				panelNuevoMensaje.setVisible(false);
+				panel_contenido.setVisible(false);
 				panelBandejaEntrada.setVisible(true);
 				tabla.setModel(datos);
 				bandeja = true;
@@ -397,6 +427,7 @@ public class Ventana_Mensajes extends JTable {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				panelBandejaEntrada.setVisible(true);
+				panel_contenido.setVisible(false);
 				panelNuevoMensaje.setVisible(false);
 				tabla.setModel(datos2);
 				bandeja = false;
@@ -410,7 +441,6 @@ public class Ventana_Mensajes extends JTable {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if ((txtPara.getText().equals(""))
-						|| (txtDe.getText().equals(""))
 						|| (txtAsunto.getText().equals(""))
 						|| (txtMensaje.getText().equals(""))) {
 					JOptionPane.showMessageDialog(frame,
@@ -428,7 +458,38 @@ public class Ventana_Mensajes extends JTable {
 
 			}
 		});
-
+		
+		//Contenido
+		panel_contenido = new JPanel();
+		panel_contenido.setBounds(161, 33, 517, 383);
+		frame.add(panel_contenido);
+		panel_contenido.setLayout(null);
+		
+		lblDe = new JLabel("De: "); //+De
+		lblDe.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblDe.setBounds(28, 36, 165, 14);
+		panel_contenido.add(lblDe);
+		
+		lblAsuntoContenido = new JLabel("Asunto:"); //+Asunto
+		lblAsuntoContenido.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblAsuntoContenido.setBounds(28, 108, 207, 14);
+		panel_contenido.add(lblAsuntoContenido);
+		
+		lblMensajeContenido = new JLabel("Mensaje:");
+		lblMensajeContenido.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblMensajeContenido.setBounds(28, 176, 75, 14);
+		panel_contenido.add(lblMensajeContenido);
+		
+		txtMensajeContenido = new JTextArea(); //Contenido
+		txtMensajeContenido.setEnabled(false);
+		txtMensajeContenido.setEditable(false);
+		txtMensajeContenido.setBounds(28, 199, 434, 129);
+		txtMensajeContenido.setLineWrap(true);
+		txtMensajeContenido.setWrapStyleWord(true);
+		txtMensajeContenido.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(Color.GRAY),
+				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+		panel_contenido.add(txtMensajeContenido);
         // Muestra la ventana
         
         frame.setVisible(true);

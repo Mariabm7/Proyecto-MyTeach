@@ -41,19 +41,19 @@ public class Persona {
 	}
 	
 	public Persona(){
-		bandejaEntrada.add( new Peticion( "Petición", "Piruli",
-   	         "Clase de hoy", "15:30", "03/12/2015", new Boolean(false) ) );
+		bandejaEntrada.add( new Mensaje( "Mensaje", "Piruli",
+   	         "Clase de hoy","Prefiero dar la clase a las 19:00", "15:30", "03/12/2015", new Boolean(false) ) );
 		bandejaEntrada.add( new Mensaje( "Mensaje", "Juan",
-  	         "Clase de mañana", "18:00", "01/11/2015", new Boolean(false) ) );
-		bandejaEntrada.add( new Peticion( "Petición", "Lola",
-  	         "Cancelar clase", "11:30", "02/10/2015", new Boolean(false) ) );
+  	         "Clase de mañana", "No voy a poder, prefiero dar la clase pasado mañana a la misma hora. Gracias", "18:00", "01/11/2015", new Boolean(false) ) );
+		bandejaEntrada.add( new Mensaje( "Mensaje", "Lola",
+  	         "Cancelar clase", "Me ha surgido un imprevisto y no podre dar clase", "11:30", "02/10/2015", new Boolean(false) ) );
 		bandejaEntrada.add( new Mensaje( "Mensaje", "Catalina",
-     	         "Clase de ayer", "20:00", "01/11/2015", new Boolean(false) ) );
-		bandejaEntrada.add(new Peticion("Petición", "Periquita", "No quiero dar mas clase", "15:00", "12/12/2012", new Boolean(false)));
+     	         "Clase de ayer", "En la clase de ayer me explicaste Las leyes de Newton. ¿Podrías hacerme unos apuntes con todo lo explicado? Gracias Profe", "20:00", "01/11/2015", new Boolean(false) ) );
+		bandejaEntrada.add(new Mensaje("Mensaje", "Periquita", "No quiero dar mas clase", "He notado cierto desinteres en mi asignatura. Asi que he decidido no darle más clases.", "15:00", "12/12/2012", new Boolean(false)));
 		
 		enviados.add( new Mensaje( "Mensaje", "Catalina",
-    	         "Clase de ayer", "20:00", "01/11/2015", new Boolean(false) ) );
-		enviados.add(new Peticion("Petición", "Periquita", "No quiero dar mas clase", "15:00", "12/12/2012", new Boolean(false)));
+    	         "Clase de ayer", "Se me habia olvidado que hoy tengo que ir a entrenar a futbol. Disculpe las molestias Profe", "20:00", "01/11/2015", new Boolean(false) ) );
+		enviados.add(new Peticion("Petición", "Periquita", "Quiero dar clase con usted", "Tengo interes en dar clase con usted", "15:00", "12/12/2012", new Boolean(false)));
 	}
 	
 	public Persona( String userName, String password, String dni, String nombre, String apellido1, String apellido2, String telefono,
@@ -177,5 +177,5 @@ public class Persona {
 	public String getFechaNacimiento() {
 		return fechaNacimiento;
 	}
-
+	
 }

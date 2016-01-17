@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JSplitPane;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -43,8 +44,8 @@ public class Ventana_NewPersona extends JFrame implements ActionListener{
 	private JTextField textField_Num;
 	private JTextField textField_Piso;
 	private JTextField textField_Ciudad;
-	private JTextField textField_Cont1;
-	private JTextField textField_Cont2;
+	private JPasswordField textField_Cont1;
+	private JPasswordField textField_Cont2;
 	private JTextField textField_UserName;
 	
 	private JComboBox comboDias;
@@ -162,7 +163,7 @@ public class Ventana_NewPersona extends JFrame implements ActionListener{
 		
 		JLabel lblRepetirContr = new JLabel("Repetir :  ");
 		
-		textField_Cont2 = new JTextField();
+		textField_Cont2 = new JPasswordField();
 		textField_Cont2.setColumns(10);
 		
 		JLabel lblNombreDeUsuario = new JLabel("Nombre de Usuario : ");
@@ -170,7 +171,7 @@ public class Ventana_NewPersona extends JFrame implements ActionListener{
 		textField_UserName = new JTextField();
 		textField_UserName.setColumns(10);
 		
-		textField_Cont1 = new JTextField();
+		textField_Cont1 = new JPasswordField();
 		textField_Cont1.setColumns(10);
 		
 		textField_Ape1 = new JTextField();
@@ -386,7 +387,7 @@ public class Ventana_NewPersona extends JFrame implements ActionListener{
 					fecha = comboDias.getSelectedItem().toString() + "/" + comboMes.getSelectedItem().toString() + "/" + comboAnyo.getSelectedItem().toString();
 					direccion = textField_Calle.getText() + textField_Num.getText() + textField_Piso.getText();
 					telefono = Integer.parseInt(textField_Tlf.getText());
-					BaseDeDatos.crearAlumno(textField_DNI.getText(), textField_Nom.getText().toString(), textField_Ape1.getText().toString(), textField_Ape2.getText().toString(), textField_Ciudad.getText().toString(), textField_Tlf.getText(), textField_UserName.getText().toString(), textField_Cont2.getText().toString());
+					BaseDeDatos.crearAlumno(textField_DNI.getText(), textField_Nom.getText().toString(), textField_Ape1.getText().toString(), textField_Ape2.getText().toString(), textField_Ciudad.getText().toString(), textField_Tlf.getText(), textField_UserName.getText().toString(), textField_Cont2.getText().toString(), fecha);
 					JOptionPane.showMessageDialog(this, "Su usuario ha sido creado con éxito");
 					persona = new Alumno(textField_UserName.getText(), textField_Cont2.getText().toString(), textField_DNI.getText(), textField_Nom.getText(), textField_Ape1.getText() , textField_Ape2.getText(), textField_Ciudad.getText(), textField_Ciudad.getText(), fecha);
 					Ventana_Login.setPersona(persona);
@@ -438,7 +439,7 @@ public class Ventana_NewPersona extends JFrame implements ActionListener{
 					JOptionPane.showMessageDialog(this, message, "¡Casillas vacías!", JOptionPane.ERROR_MESSAGE);
 
 				}else{
-					BaseDeDatos.crearProfesor(textField_DNI.getText(), textField_Nom.getText().toString(), textField_Ape1.getText().toString(), textField_Ape2.getText().toString(), textField_Ciudad.getText().toString(), textField_Tlf.getText(), textField_UserName.getText().toString(), textField_Cont2.getText().toString());
+					BaseDeDatos.crearProfesor(textField_DNI.getText(), textField_Nom.getText().toString(), textField_Ape1.getText().toString(), textField_Ape2.getText().toString(), textField_Ciudad.getText().toString(), textField_Tlf.getText(), textField_UserName.getText().toString(), textField_Cont2.getText().toString(), fecha);
 					JOptionPane.showMessageDialog(this, "Su usuario ha sido creado con éxito");
 					persona = new Profesor(textField_UserName.getText(), textField_Cont2.getText().toString(), textField_DNI.getText(), textField_Nom.getText(), textField_Ape1.getText() , textField_Ape2.getText(), textField_Ciudad.getText(), textField_Ciudad.getText(), fecha);
 					//TODO guardar la persona y poner como persona en Ventana_Login

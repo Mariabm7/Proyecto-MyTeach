@@ -22,7 +22,9 @@ import java.awt.event.KeyListener;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
+import BaseDeDatos.BaseDeDatos;
 import objetos.Persona;
+import objetos.Profesor;
 
 public class Ventana_Login extends JFrame {
 
@@ -33,7 +35,8 @@ public class Ventana_Login extends JFrame {
 
 	// Usuario en uso
 	protected static Persona persona;
-
+	private static int quien; //1--> Alumno
+							  //2--> Profesor
 
 	private JLabel lblLogo;
 	private JPanel panel;
@@ -43,6 +46,7 @@ public class Ventana_Login extends JFrame {
 	private JPasswordField txtContrasea;
 	private JButton btnNew;
 	private JButton btnIniciar;
+
 
 	public Ventana_Login() {
 		setResizable(false);
@@ -139,27 +143,26 @@ public class Ventana_Login extends JFrame {
 		ventanaLogin.setVisible(true);
 	}
 
-	public int compruebaContrasenya(String usuario, String contrasenya) {
-		int log = 0;
-		if (usuario.equals("bd2a") && contrasenya.equals("bd2a")) {
-			log = 1;
-		} else if (usuario.equals("bd2b") && contrasenya.equals("bd2b")) {
-			log = 2;
+	public boolean compruebaContrasena(String usuario, String contrasena) {
+		boolean acierto = BaseDeDatos.comprobarContrasenaAlumno(usuario, contrasena);
+		persona = BaseDeDatos.ConseguirPersonaAlumno(usuario, contrasena);
+		if(!acierto){
+			acierto = BaseDeDatos.comprobarContrasenaProfesor(usuario, contrasena);
+			persona = BaseDeDatos.ConseguirPersonaProfesor(usuario, contrasena);
+			quien = 2;
 		}
-		return log;
+		quien = 1;
+		return acierto;
 	}
 
 	public void iniciarSesion() {
 		String usuario = Ventana_Login.this.txtUsuario.getText();
-		String contrasenya = Ventana_Login.this.txtContrasea.getText();
-		int log = compruebaContrasenya(usuario, contrasenya);
-		// if(log == 1){
-		// Ventana_PrincipalProf ventanaPrincipal = new
-		// Ventana_PrincipalProf(usuario);
-		// Ventana_Login.this.dispose();
-		// }else
-		if (log == 2) {
-			Ventana_Busqueda ventanaPrincipal = new Ventana_Busqueda();
+		String contrasena = Ventana_Login.this.txtContrasea.getText();
+		boolean acierto = compruebaContrasena(usuario, contrasena);
+		
+		if (acierto) {
+			Ventana_Busqueda ventanaBusqueda = new Ventana_Busqueda();
+			ventanaBusqueda.setVisible(true);
 			Ventana_Login.this.dispose();
 		} else {
 			JOptionPane
@@ -170,7 +173,8 @@ public class Ventana_Login extends JFrame {
 							JOptionPane.ERROR_MESSAGE);
 			Ventana_Login.this.txtContrasea.setText(null);
 		}
-
+		
+		setPersona(persona);
 	}
 
 	public static Persona getPersona() {
@@ -180,5 +184,10 @@ public class Ventana_Login extends JFrame {
 	public static void setPersona(Persona persona) {
 		Ventana_Login.persona = persona;
 	}
+
+	public static int getQuien() {
+		return quien;
+	}
+	
 	
 }

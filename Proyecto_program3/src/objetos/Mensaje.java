@@ -27,10 +27,11 @@ public class Mensaje implements DatoParaTabla{
 		this.hora = hora;
 		this.fecha = fecha;
 	}
-	public Mensaje(String tipo ,String de, String asunto, String hora, String fecha, boolean eliminar){
+	public Mensaje(String tipo ,String de, String asunto, String contenido, String hora, String fecha, boolean eliminar){
 		this.tipo = tipo;
 		this.de = de;
 		this.asunto = asunto;
+		this.contenido = contenido;
 		this.hora = hora;
 		this.fecha = fecha;
 		this.eliminar = eliminar;

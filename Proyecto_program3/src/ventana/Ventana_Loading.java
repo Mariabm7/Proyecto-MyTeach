@@ -1,10 +1,8 @@
 package ventana;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
-import javax.swing.JTextArea;
 
 import java.awt.FlowLayout;
 
@@ -23,11 +21,7 @@ public class Ventana_Loading extends JFrame {
 	private JLabel lblLogo;
 	private JPanel panelBarra;
 	private JProgressBar current;
-	private JTextArea out;
-	private JButton find;
-	private Thread runner;
 	private int num = 0;
-	//private Progress progress;
 
 	public Ventana_Loading() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Ventana_Loading.class.getResource("/imagenes/Logo1.JPG")));

@@ -82,11 +82,12 @@ public class BaseDeDatos {
 	// PARTICULAR 
 	// ------------
 	
-	public static void crearAlumno(String id, String nombre, String apellido1, String apellido2, String ciudad, String telefono, String usuario, String contrasena){
+	//Ventana_NewPersona
+	public static void crearAlumno(String id, String nombre, String apellido1, String apellido2, String ciudad, String telefono, String usuario, String contrasena, String fecha){
 		Connection c = initBD("data/bd.db");
 		
 		try {
-			PreparedStatement s = c.prepareStatement("INSERT INTO alumnos VALUES (?,?,?,?,?,?,?,?)");
+			PreparedStatement s = c.prepareStatement("INSERT INTO alumnos VALUES (?,?,?,?,?,?,?,?,?)");
 			
 			s.setString(1,id);
 			s.setString(2,nombre);
@@ -96,9 +97,10 @@ public class BaseDeDatos {
 			s.setString(6,telefono);
 			s.setString(7,usuario);
 			s.setString(8,contrasena);
-			
+			s.setString(9, fecha);
 			
 			s.executeUpdate();
+			s.close();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -107,11 +109,11 @@ public class BaseDeDatos {
 		
 	}
 	
-	public static void crearProfesor(String id, String nombre, String apellido1, String apellido2, String ciudad, String telefono, String usuario, String contrasena){
+	public static void crearProfesor(String id, String nombre, String apellido1, String apellido2, String ciudad, String telefono, String usuario, String contrasena, String fecha){
 		Connection c = initBD("data/bd.db");
 		
 		try {
-			PreparedStatement s = c.prepareStatement("INSERT INTO profesor VALUES (?,?,?,?,?,?,?,?)");
+			PreparedStatement s = c.prepareStatement("INSERT INTO profesor VALUES (?,?,?,?,?,?,?,?,?)");
 			
 			s.setString(1,id);
 			s.setString(2,nombre);
@@ -121,22 +123,23 @@ public class BaseDeDatos {
 			s.setString(6,telefono);
 			s.setString(7,usuario);
 			s.setString(8,contrasena);
+			s.setString(9, fecha);
 			
 			
 			s.executeUpdate();
-			
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			
 		}
 		
 	}
-
+	//Ventana_Perfil
 	public static void guardarAlumno(Persona p) {
 		Connection c = initBD("data/bd.db");
 
 		try {
-			PreparedStatement s = c.prepareStatement("UPDATE alumnos SET nombre = ?, apellido1 = ?, apellido2 = ?, ciudad = ?, telefono = ?, usuario = ?, contrasena = ? WHERE id = ? )");
+			PreparedStatement s = c.prepareStatement("UPDATE alumnos SET nombre = ?, apellido1 = ?, apellido2 = ?, ciudad = ?, telefono = ?, usuario = ?, contrasena = ? WHERE id = ?");
 //TODO En la clase Ventana_Perfil hacer set para coger directamente con get ya cambiadas
 			s.setString(1, p.getNombre());
 			s.setString(2, p.getApellido1());
@@ -148,6 +151,30 @@ public class BaseDeDatos {
 			s.setString(8, p.getDni());
 			
 			s.executeUpdate();
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+		
+	}
+	public static void guardarProfesor(Persona p) {
+		Connection c = initBD("data/bd.db");
+
+		try {
+			PreparedStatement s = c.prepareStatement("UPDATE profesor SET nombre = ?, apellido1 = ?, apellido2 = ?, ciudad = ?, telefono = ?, usuario = ?, contrasena = ? WHERE id = ?");
+//TODO En la clase Ventana_Perfil hacer set para coger directamente con get ya cambiadas
+			s.setString(1, p.getNombre());
+			s.setString(2, p.getApellido1());
+			s.setString(3, p.getApellido2());
+			s.setString(4, p.getCiudad());
+			s.setString(5, p.getTelefono());
+			s.setString(6, p.getUserName());
+			s.setString(7, p.getPassword());
+			s.setString(8, p.getDni());
+			
+			s.executeUpdate();
+			s.close();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -155,7 +182,8 @@ public class BaseDeDatos {
 		}
 		
 	}
-	public static boolean comprobarContrasena(String usuario, String contrasena){
+	//Ventana_Login
+	public static boolean comprobarContrasenaAlumno(String usuario, String contrasena){
 		Connection c = initBD("data/bd.db");
 		boolean correcto = false ;
 		ResultSet rs = null;
@@ -168,6 +196,7 @@ public class BaseDeDatos {
 					 correcto = true;
 				 }
 			 }
+			 s1.close();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -175,6 +204,77 @@ public class BaseDeDatos {
 			
 	}
 	
+	public static boolean comprobarContrasenaProfesor(String usuario, String contrasena){
+		Connection c = initBD("data/bd.db");
+		boolean correcto = false ;
+		ResultSet rs = null;
+		try {
+			PreparedStatement s1 = c.prepareStatement("SELECT contrasena FROM profesor WHERE usuario = ? ");
+			s1.setString(1, usuario);
+			rs = s1.executeQuery();
+			 if(rs.next()){
+				 if(rs.getString("contrasena").equals(contrasena)){
+					 correcto = true;
+				 }
+			 }
+			 s1.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return correcto;
+			
+	}
+	public static Persona ConseguirPersonaAlumno (String usuario, String contrasena){
+		Persona persona = new Persona();
+		Connection c = initBD("data/bd.db");
+		ResultSet rs = null;
+		try {
+			PreparedStatement s1 = c.prepareStatement("SELECT nombre, apellido1, apellido2, id, ciudad, telefono, fechaNcto FROM alumnos WHERE usuario = ? AND contrasena = ?");
+			s1.setString(1, usuario);
+			s1.setString(2, contrasena);
+			rs = s1.executeQuery();
+			persona.setNombre(rs.getString("nombre"));
+			persona.setApellido1(rs.getString("apellido1"));
+			persona.setApellido2(rs.getString("apellido2"));
+			persona.setDni(rs.getString("id"));
+			persona.setCiudad(rs.getString("ciudad"));
+			persona.setTelefono(rs.getString("telefono"));
+			persona.setUserName(usuario);
+			persona.setPassword(contrasena);
+			persona.setFechaNacimiento("fechaNcto");
+			s1.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return persona;
+
+	}
+	public static Persona ConseguirPersonaProfesor (String usuario, String contrasena){
+		Persona persona = new Persona();
+		Connection c = initBD("data/bd.db");
+		ResultSet rs = null;
+		try {
+			PreparedStatement s1 = c.prepareStatement("SELECT nombre, apellido1, apellido2, id, ciudad, telefono, fechaNcto FROM profesor WHERE usuario = ? AND contrasena = ?");
+			s1.setString(1, usuario);
+			s1.setString(2, contrasena);
+			rs = s1.executeQuery();
+			persona.setNombre(rs.getString("nombre"));
+			persona.setApellido1(rs.getString("apellido1"));
+			persona.setApellido2(rs.getString("apellido2"));
+			persona.setDni(rs.getString("id"));
+			persona.setCiudad(rs.getString("ciudad"));
+			persona.setTelefono(rs.getString("telefono"));
+			persona.setUserName(usuario);
+			persona.setPassword(contrasena);
+			persona.setFechaNacimiento("fechaNcto");
+			s1.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return persona;
+
+	}
+	//Ventana_Busqueda
 	public static ArrayList<String> busquedaColegio(String ciudad, String asignatura, String idioma, String nivel){
 		Connection c = initBD("data/bd.db");
 		ResultSet rs = null;
@@ -191,6 +291,7 @@ public class BaseDeDatos {
 				if(rs.next()){
 					id_profs_correctos.add(id);
 				}
+				s.close();
 			}
 			
 		}catch(SQLException e){
@@ -198,6 +299,7 @@ public class BaseDeDatos {
 		}
 		return id_profs_correctos;
 	}
+	
 	public static ArrayList<String> busquedaEscuelaDeIdiomas(String ciudad, String idioma, String nivel){
 		Connection c = initBD("data/bd.db");
 		ResultSet rs = null;
@@ -213,13 +315,14 @@ public class BaseDeDatos {
 				if(rs.next()){
 					id_profs_correctos.add(id);
 				}
+				s.close();
 			}
-			
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
 		return id_profs_correctos;
 	}
+	
 	public static ArrayList<String> conseguirIdProfesorCiudad(String ciudad){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -232,15 +335,15 @@ public class BaseDeDatos {
 			while(rs.next()){
 				ids.add(rs.getString("id"));
 			}
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return ids;
 	}
-	//TODO era aqui donde habia que hacer arraylist??
+	
 	private ArrayList<String> prof_nombre;
 	private ArrayList<String> prof_Apellido;
-	//
 	public static ArrayList<String> conseguirIdProfesorNombre(ArrayList<String> id_prof){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -253,7 +356,7 @@ public class BaseDeDatos {
 				rs = s.executeQuery();
 				nombres.add(rs.getString("nombre"));
 			}
-
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -271,13 +374,13 @@ public class BaseDeDatos {
 				rs = s.executeQuery();
 				apellidos.add(rs.getString("apellido1")+" "+ rs.getString("apellido2"));
 			}
-
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return apellidos;
 	}
-	
+	//Ventana_Mensaje
 	//TODO mensajes bandeja de entrada y enviados
 	public static String conseguirIdAlumno(String usuario){
 		Connection c = initBD("data/bd.db");
@@ -287,12 +390,14 @@ public class BaseDeDatos {
 			s = c.prepareStatement("SELECT id FROM alumnos WHERE usuario = ?"); 
 			s.setString(1, usuario);
 			rs = s.executeQuery();
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 
 		}
 		try {
 			return rs.getString("id");
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -306,6 +411,7 @@ public class BaseDeDatos {
 			s = c.prepareStatement("SELECT id FROM profesor WHERE usuario = ?"); 
 			s.setString(1, usuario);
 			rs = s.executeQuery();
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -328,6 +434,7 @@ public class BaseDeDatos {
 			s.setString(4, asunto);
 			s.setString(5, tipo);
 			s.executeUpdate();
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 
@@ -345,18 +452,24 @@ public class BaseDeDatos {
 			s.setString(4, asunto);
 			s.setString(5, tipo);
 			s.executeUpdate();
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 
 		}
 	}
-	//TODO borrar mensaje de bd y buscar id
+	public static void mensajeId(String id){
+		
+	}
+	
+	//TODO borrar mensaje de bd y buscar id de mensaje
 	public static void borrarMensaje (int id){
 		Connection c = initBD("data/bd.db");
 		try {
 			PreparedStatement s = c.prepareStatement("DELETE FROM mensaje WHERE id = ?"); 
 			s.setInt(1, id);
 			s.executeUpdate();
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
