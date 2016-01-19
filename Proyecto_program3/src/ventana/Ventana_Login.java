@@ -22,7 +22,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
-import BaseDeDatos.BaseDeDatos;
+import baseDeDatos.BaseDeDatos;
 import objetos.Persona;
 import objetos.Profesor;
 

@@ -1,4 +1,4 @@
-package BaseDeDatos;
+package baseDeDatos;
 
 import java.lang.reflect.Array;
 import java.sql.Connection;

@@ -33,8 +33,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPasswordField;
 
+import baseDeDatos.BaseDeDatos;
 import objetos.Persona;
-import BaseDeDatos.BaseDeDatos;
 //Ventana base, para que todas tengan la misma estructura
 //Copiar Pegar
 public class Ventana_Perfil extends JFrame implements ActionListener {
@@ -456,11 +456,11 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 				p.setPassword(pwdContrasena2.getText());
 				Ventana_Login.setPersona(p);
 				//TODO guardar datos en base de datos
-				//if (Ventana_Login.getQuien() == 1){
+				if (Ventana_Login.getQuien() == 1){
 					BaseDeDatos.guardarAlumno(Ventana_Login.getPersona());
-				//}else{
-				//	BaseDeDatos.guardarProfesor(Ventana_Login.getPersona());
-				//}
+				}else{
+					BaseDeDatos.guardarProfesor(Ventana_Login.getPersona());
+				}
 			}
 		}
 	}

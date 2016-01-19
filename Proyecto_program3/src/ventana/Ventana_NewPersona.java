@@ -20,7 +20,7 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 
-import BaseDeDatos.BaseDeDatos;
+import baseDeDatos.BaseDeDatos;
 import objetos.Alumno;
 import objetos.Persona;
 import objetos.Profesor;

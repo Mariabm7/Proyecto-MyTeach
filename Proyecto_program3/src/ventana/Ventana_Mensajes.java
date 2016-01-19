@@ -497,8 +497,6 @@ public class Ventana_Mensajes extends JTable {
 	
 	
 	
-	//TODO Hacerlo como el boton eliminar en Envia
-	
 	public static void main(String[] args) {
 	       // Mandar trabajo a Swing
         javax.swing.SwingUtilities.invokeLater(new Runnable() {

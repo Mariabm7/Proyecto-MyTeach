@@ -37,7 +37,7 @@ import javax.swing.JCheckBox;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
-import BaseDeDatos.BaseDeDatos;
+import baseDeDatos.BaseDeDatos;
 import objetos.DatoParaTabla;
 import objetos.MiTableModel;
 
@@ -405,8 +405,10 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		panel_tabla.setVisible(false);
 		
 		tabla = new JTable(datos);
+		
 		//Ejemplo para comprobar que funciona
 		//datos.insertar(new Linea("Federico", "Lorca Garcia", true));
+		
 		JScrollPane scrollPane = new JScrollPane(tabla);
 		scrollPane.setBounds(32, 11, 452, 219);
 		panel_tabla.add(scrollPane);
@@ -418,6 +420,7 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 			public void actionPerformed(ActionEvent arg0) {
 				if (tabla.getSelectedRow() >= 0 && tabla.getSelectedRow() < datos.getRowCount() ) {
 					//TODO Coger el usuario y mandarle un mensaje
+					
 					//Para poner no editable la columna
 					//datos.setCellEditable(2, false);
 					
