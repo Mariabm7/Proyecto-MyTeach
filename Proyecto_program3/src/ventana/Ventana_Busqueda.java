@@ -45,7 +45,7 @@ import objetos.MiTableModel;
 
 public class Ventana_Busqueda extends JFrame implements ActionListener {
 	
-		/**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
@@ -421,7 +421,6 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (tabla.getSelectedRow() >= 0 && tabla.getSelectedRow() < datos.getRowCount() ) {
-					//TODO Coger el usuario y mandarle un mensaje
 					String id = "0"+(Ventana_Login.getPersona().getBandejaEntrada().size() + Ventana_Login.getPersona().getEnviados().size() + 1);
 					Calendar calendario = Calendar.getInstance();
 					int hora = calendario.get(Calendar.HOUR_OF_DAY);
@@ -504,6 +503,9 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 
 	}
 	
+	/**Metodo para saber que esta sellecionado en los JRadioButton de Colegio
+	 * @return String
+	 */
 	public String getSelectedColegio(){
 		if (rdbtnPrimaria.isSelected()){
 			return rdbtnPrimaria.getText();
@@ -514,6 +516,9 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		}
 		return "";
 	}
+	/**Metodo para saber que esta sellecionado en los JRadioButton de Ecuela de Idiomas
+	 * @return String
+	 */
 	public String getSelectedEscuelaDeIdiomas(){
 		if (rbtnA1.isSelected()){
 			return rbtnA1.getText();
@@ -530,8 +535,10 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		}
 		return "";
 	}
+	/**Metodo que realiza la busqueda
+	 * 
+	 */
 	public void hacerBusqueda(){
-		clear_Tabla();
 		if (comboBox_tipo.getSelectedItem().equals("Colegio") ){
 			ArrayList<String> id_prof = BaseDeDatos.busquedaColegio(txtCiudad.getText(), txtAsignatura.getText(), comboBox_IdiomaColegio.getSelectedItem().toString(), getSelectedColegio());
 			ArrayList<String> id_nombre = BaseDeDatos.conseguirIdProfesorNombre(id_prof);
@@ -552,18 +559,13 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 			tabla.updateUI();
 		}
 	}
-    public void clear_Tabla(){
-        for (int i = 0; i < tabla.getRowCount(); i++) {
-            datos.borrar(i);
-            i-=1;
-        }
-    }
+
 	public static void main(String[] args) {
 		Ventana_Busqueda ventanaBusqueda = new Ventana_Busqueda();
 		ventanaBusqueda.setVisible(true);
 	}
 }
-	 
+	 //Para crear la JTable
 	//[01] Clase de datos de base para el modelo
 	class Linea implements DatoParaTabla {
 		public static String[] nombresAtributos = new String[] {

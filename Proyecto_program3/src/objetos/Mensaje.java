@@ -1,7 +1,5 @@
 package objetos;
 
-import java.io.ObjectInputStream.GetField;
-
 public class Mensaje implements DatoParaTabla{
 	private String id;
 	private String tipo;
@@ -13,21 +11,14 @@ public class Mensaje implements DatoParaTabla{
 	private String fecha;
 	private boolean eliminar;
 	
+	//Elementos para JTable
 	public static String[] nombresAtributos = new String[] {
 		"Tipo", "De", "Asunto", "Hora", "Fecha", "Eliminar" };
 	public static boolean[] atributosEditables = new boolean[] {
 		false, false, false, false, false, true };
-//	public Mensaje(String tipo, String para, String de, String asunto, String contenido,
-//			String hora, String fecha) {
-//		super();
-//		this.tipo =tipo;
-//		this.para = para;
-//		this.de = de;
-//		this.asunto = asunto;
-//		this.contenido = contenido;
-//		this.hora = hora;
-//		this.fecha = fecha;
-//	}
+	//Constructores
+	public Mensaje(){}
+	
 	public Mensaje(String tipo ,String de, String asunto, String contenido, String hora, String fecha){
 		this.tipo = tipo;
 		this.de = de;
@@ -36,8 +27,6 @@ public class Mensaje implements DatoParaTabla{
 		this.hora = hora;
 		this.fecha = fecha;
 	}
-	
-	public Mensaje(){}
 	
 	public Mensaje(String id, String tipo, String de, String asunto,
 			String contenido, String hora, String fecha) {
@@ -50,7 +39,8 @@ public class Mensaje implements DatoParaTabla{
 		this.hora = hora;
 		this.fecha = fecha;
 	}
-
+	//Getters and setters
+	
 	public String getTipo(Mensaje mensaje) {
 		if ( mensaje instanceof Peticion ){
 			tipo = "Peticio9n";
@@ -107,9 +97,9 @@ public class Mensaje implements DatoParaTabla{
 		this.id = id;
 	}
 	
-	//Metodos de la interfaz
 	
-
+	
+	//Metodos de la interfaz para la JTable
 	@Override
 	public int getNumColumnas() {
 		return 6;

@@ -118,14 +118,10 @@ public class Ventana_Login extends JFrame {
 			}
 
 			@Override
-			public void keyReleased(KeyEvent e) {
-
-			}
+			public void keyReleased(KeyEvent e) {}
 
 			@Override
-			public void keyPressed(KeyEvent e) {
-
-			}
+			public void keyPressed(KeyEvent e) {}
 		};
 		txtContrasea.addKeyListener(enter);
 		txtUsuario.addKeyListener(enter);
@@ -143,6 +139,11 @@ public class Ventana_Login extends JFrame {
 		ventanaLogin.setVisible(true);
 	}
 
+	/**Metodo que comprueba el Usuario y Contraseña en ña BD
+	 * @param usuario String
+	 * @param contrasena String
+	 * @return true/false
+	 */
 	public boolean compruebaContrasena(String usuario, String contrasena) {
 		boolean acierto = BaseDeDatos.comprobarContrasenaAlumno(usuario, contrasena);
 		persona = BaseDeDatos.ConseguirPersonaAlumno(usuario, contrasena);
@@ -155,6 +156,9 @@ public class Ventana_Login extends JFrame {
 		return acierto;
 	}
 
+	/**Metodo que realiza todo lo necesario para iniciar sesion
+	 * 
+	 */
 	public void iniciarSesion() {
 		String usuario = Ventana_Login.this.txtUsuario.getText();
 		String contrasena = Ventana_Login.this.txtContrasea.getText();
@@ -176,7 +180,7 @@ public class Ventana_Login extends JFrame {
 		
 		setPersona(persona);
 	}
-
+	//Getters y setters
 	public static Persona getPersona() {
 		return persona;
 	}

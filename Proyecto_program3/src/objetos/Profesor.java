@@ -1,5 +1,5 @@
 package objetos;
-
+//Clase Basica de Jorge y Javier
 public class Profesor extends Persona{
 	private Persona persona;
 	private int precioHora; // Sería interesante que fuera un double.

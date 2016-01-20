@@ -1,6 +1,6 @@
 package baseDeDatos;
 
-import java.lang.reflect.Array;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 import objetos.Mensaje;
 import objetos.Persona;
-import ventana.Ventana_Login;
 
 /** Métodos útiles para base de datos.
  * Clase con métodos estáticos para gestionar una sola base de datos
@@ -85,6 +84,19 @@ public class BaseDeDatos {
 	// ------------
 	
 	//Ventana_NewPersona
+	
+	
+	/** Crea/Registra un alumno y la base de datos y guarda todos sus atributos con un insert
+	 * @param id String
+	 * @param nombre String
+	 * @param apellido1 String
+	 * @param apellido2 String
+	 * @param ciudad String
+	 * @param telefono String
+	 * @param usuario String
+	 * @param contrasena String
+	 * @param fecha String
+	 */
 	public static void crearAlumno(String id, String nombre, String apellido1, String apellido2, String ciudad, String telefono, String usuario, String contrasena, String fecha){
 		Connection c = initBD("data/bd.db");
 		
@@ -106,11 +118,21 @@ public class BaseDeDatos {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-			
 		}
 		
 	}
 	
+	/** Crea/Registra un profesor y la base de datos y guarda todos sus atributos con un insert
+	 * @param id String
+	 * @param nombre String
+	 * @param apellido1 String
+	 * @param apellido2 String
+	 * @param ciudad String
+	 * @param telefono String
+	 * @param usuario String
+	 * @param contrasena String
+	 * @param fecha String
+	 */
 	public static void crearProfesor(String id, String nombre, String apellido1, String apellido2, String ciudad, String telefono, String usuario, String contrasena, String fecha){
 		Connection c = initBD("data/bd.db");
 		
@@ -127,16 +149,19 @@ public class BaseDeDatos {
 			s.setString(8,contrasena);
 			s.setString(9, fecha);
 			
-			
 			s.executeUpdate();
 			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			
 		}
 		
 	}
 	//Ventana_Perfil
+	
+	
+	/**Guarda todos los campos editables d eun alumno en la BD al clickar guardar cambios
+	 * @param p Persona
+	 */
 	public static void guardarAlumno(Persona p) {
 		Connection c = initBD("data/bd.db");
 
@@ -159,6 +184,9 @@ public class BaseDeDatos {
 		}
 		
 	}
+	/**Guarda todos los campos editables d eun alumno en la BD al clickar guardar cambios
+	 * @param p Persona
+	 */
 	public static void guardarProfesor(Persona p) {
 		Connection c = initBD("data/bd.db");
 
@@ -179,10 +207,17 @@ public class BaseDeDatos {
 		} catch (SQLException e) {
 			e.printStackTrace();
 
-		}
-		
+		}	
 	}
+	
 	//Ventana_Login
+	
+	/**Comprueba que el Alumno haya introducido correctamente su usuario y contraseña
+	 * para poder acceder desde login
+	 * @param usuario String
+	 * @param contrasena String
+	 * @return true/false
+	 */
 	public static boolean comprobarContrasenaAlumno(String usuario, String contrasena){
 		Connection c = initBD("data/bd.db");
 		boolean correcto = false ;
@@ -203,7 +238,12 @@ public class BaseDeDatos {
 		return correcto;
 			
 	}
-	
+	/**Comprueba que el Profesor haya introducido correctamente su usuario y contraseña
+	 * para poder acceder desde login
+	 * @param usuario String
+	 * @param contrasena String
+	 * @return true/false
+	 */
 	public static boolean comprobarContrasenaProfesor(String usuario, String contrasena){
 		Connection c = initBD("data/bd.db");
 		boolean correcto = false ;
@@ -224,6 +264,13 @@ public class BaseDeDatos {
 		return correcto;
 			
 	}
+	
+	/**Crea una Persona con toda la informacion del Alumno que ha accedido
+	 * desde la Ventana_Login
+	 * @param usuario String
+	 * @param contrasena String
+	 * @return Persona
+	 */
 	public static Persona ConseguirPersonaAlumno (String usuario, String contrasena){
 		Persona persona = new Persona();
 		Connection c = initBD("data/bd.db");
@@ -249,6 +296,12 @@ public class BaseDeDatos {
 		return persona;
 
 	}
+	/**Crea una Persona con toda la informacion del Profesor que ha accedido
+	 * desde la Ventana_Login
+	 * @param usuario String
+	 * @param contrasena String
+	 * @return Persona
+	 */
 	public static Persona ConseguirPersonaProfesor (String usuario, String contrasena){
 		Persona persona = new Persona();
 		Connection c = initBD("data/bd.db");
@@ -275,6 +328,15 @@ public class BaseDeDatos {
 
 	}
 	//Ventana_Busqueda
+	
+	/**Devuelve un arrayList con todos los Profesores que cumplen las
+	 * caracteristicas especificadas por el alumno de Colegio
+	 * @param ciudad String 
+	 * @param asignatura String
+	 * @param idioma String 
+	 * @param nivel String
+	 * @return ArrayList<String>
+	 */
 	public static ArrayList<String> busquedaColegio(String ciudad, String asignatura, String idioma, String nivel){
 		Connection c = initBD("data/bd.db");
 		ResultSet rs = null;
@@ -300,6 +362,13 @@ public class BaseDeDatos {
 		return id_profs_correctos;
 	}
 	
+	/**Devuelve un arrayList con todos los Profesores que cumplen las
+	 * caracteristicas especificadas por el alumno de Escuela de Idiomas
+	 * @param ciudad String
+	 * @param idioma String
+	 * @param nivel String
+	 * @return ArrayList<String>
+	 */
 	public static ArrayList<String> busquedaEscuelaDeIdiomas(String ciudad, String idioma, String nivel){
 		Connection c = initBD("data/bd.db");
 		ResultSet rs = null;
@@ -323,6 +392,12 @@ public class BaseDeDatos {
 		return id_profs_correctos;
 	}
 	
+	
+	/**Devuelve un arrayList de id de todos los Profesores que son de la ciudad
+	 * especificada por el Alumno
+	 * @param ciudad String
+	 * @return ArrayList<String>
+	 */
 	public static ArrayList<String> conseguirIdProfesorCiudad(String ciudad){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -342,9 +417,13 @@ public class BaseDeDatos {
 		return ids;
 	}
 	
-	private ArrayList<String> prof_nombre;
-	private ArrayList<String> prof_Apellido;
 
+
+	/**Devuelve un ArrayList con los nombres de los profesores de la ciudad 
+	 * especificada por el Alumno
+	 * @param id_prof ArrayLis<String>
+	 * @return ArrayLis<String>
+	 */
 	public static ArrayList<String> conseguirIdProfesorNombre(ArrayList<String> id_prof){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -363,6 +442,11 @@ public class BaseDeDatos {
 		}
 		return nombres;
 	}
+	/**Devuelve un ArrayList con los nombres de los profesores de la ciudad 
+	 * especificada por el Alumno
+	 * @param id_prof ArrayLis<String>
+	 * @return ArrayLis<String>
+	 */
 	public static ArrayList<String> conseguirIdProfesorApellidos(ArrayList<String> id_prof){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -383,10 +467,13 @@ public class BaseDeDatos {
 	}
 	
 	//Ventana_Mensaje
-	//TODO mensajes bandeja de entrada y enviados
-	
 	//Bandeja de entrada
 	
+	/**Devuelve un ArrayList con id de los mensajes en los que el usuario 
+	 * esta en id_recibe
+	 * @param idUsuario String
+	 * @return ArrayList <String>
+	 */
 	public static ArrayList<String> conseguirIdRecibidos(String idUsuario){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -407,6 +494,12 @@ public class BaseDeDatos {
 		return idRecibidos;
 	}
 	
+	/**Devuelve un ArrayList con los mensajes de los id resultado del 
+	 * metodo conseguirIdRecibidos(String idUsuario) 
+	 * En el caso de que los id sean de Alumnos
+	 * @param idUsuario String
+	 * @return ArrayList<Mensaje>
+	 */
 	public static ArrayList<Mensaje> bandejaEntradaAlumno(String idUsuario){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -432,6 +525,12 @@ public class BaseDeDatos {
 		}
 		return mensajesRecibidos;
 	}
+	/**Devuelve un ArrayList con los mensajes de los id resultado del 
+	 * metodo conseguirIdRecibidos(String idUsuario) 
+	 * En el caso de que los id sean de Profesor
+	 * @param idUsuario String
+	 * @return ArrayList<Mensaje>
+	 */
 	public static ArrayList<Mensaje> bandejaEntradaProfesor(String idUsuario){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -459,6 +558,11 @@ public class BaseDeDatos {
 	}
 	
 	//Enviados
+	/**Devuelve un ArrayList con id de los mensajes en los que el usuario 
+	 * esta en id_envia
+	 * @param idUsuario String
+	 * @return ArrayList <String>
+	 */
 	public static ArrayList<String> conseguirIdEnviados(String idUsuario){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -478,9 +582,12 @@ public class BaseDeDatos {
 		}
 		return idEnviados;
 	}
-	
-	
-	
+	/**Devuelve un ArrayList con los mensajes de los id resultado del 
+	 * metodo conseguirIdEnviados(String idUsuario) 
+	 * En el caso de que los id sean de Alumnos
+	 * @param idUsuario String
+	 * @return ArrayList<Mensaje>
+	 */
 	public static ArrayList<Mensaje> enviadosAlumno(String idUsuario){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -510,6 +617,12 @@ public class BaseDeDatos {
 		}
 		return mensajesEnviados;
 	}
+	/**Devuelve un ArrayList con los mensajes de los id resultado del 
+	 * metodo conseguirIdEnviados(String idUsuario) 
+	 * En el caso de que los id sean de Profesor
+	 * @param idUsuario String
+	 * @return ArrayList<Mensaje>
+	 */
 	public static ArrayList<Mensaje> enviadosProfesor(String idUsuario){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -540,6 +653,11 @@ public class BaseDeDatos {
 		}
 		return mensajesEnviados;
 	}
+	
+	/**Devuelve el nombre del alumno correspondiente al id proporcionado
+	 * @param id String
+	 * @return String
+	 */
 	public static String conseguirNombreAlumno(String id){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -556,7 +674,10 @@ public class BaseDeDatos {
 		}
 		return nombre;
 	}
-	
+	/**Devuelve el nombre del profesor correspondiente al id proporcionado
+	 * @param id String
+	 * @return String
+	 */
 	public static String conseguirNombreProfesor(String id){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -576,6 +697,10 @@ public class BaseDeDatos {
 		return nombre;
 	}
 	
+	/**Devuelve el contenido de un Mensaje 
+	 * @param mensaje Mensaje
+	 * @return String
+	 */
 	public static String conseguirContenido(Mensaje mensaje){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -597,6 +722,10 @@ public class BaseDeDatos {
 	}
 	
 	
+	/**Elimina de la BD un arraylist donde se guardan todos los id 
+	 * d elos mensajes que se desean eliminar por el usuario
+	 * @param eliminar ArrayList <Mensaje>
+	 */
 	public static void borrarMensaje (ArrayList<Mensaje> eliminar){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -615,9 +744,17 @@ public class BaseDeDatos {
 			e.printStackTrace();
 		}
 	}
+	
 	//Mandar Mensajes
 	
 	//Mensajes a enviar por el Alumno
+	
+	/**El alumno introduce el nombre del Profesor para enviarle un mensaje
+	 * Este metodo transforma el nombre en un Id 
+	 * para guardarlo en la tabla de Mensaje
+	 * @param nombre
+	 * @return String
+	 */
 	public static String conseguirIdProfesor(String nombre){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -637,6 +774,16 @@ public class BaseDeDatos {
 		return id;
 	}
 
+	/**Crea/Guarda el mensaje en la BD con sus respectivos atributos al Profesor
+	 * @param id String
+	 * @param idUsuario String
+	 * @param nombreProf String
+	 * @param contenido String
+	 * @param asunto String
+	 * @param tipo String
+	 * @param hora String
+	 * @param fecha String
+	 */
 	public static void mensajeAProfesor(String id, String idUsuario, String nombreProf, String contenido, String asunto, String tipo, String hora, String fecha){
 		Connection c = initBD("data/bd.db");
 		String idProfesor = conseguirIdProfesor(nombreProf);
@@ -658,6 +805,12 @@ public class BaseDeDatos {
 		}
 	}
 	//Mensajes a enviar por el Profesor
+	/**El Profesor introduce el nombre del Alumno para enviarle un mensaje
+	 * Este metodo transforma el nombre en un Id 
+	 * para guardarlo en la tabla de Mensaje
+	 * @param nombre
+	 * @return String
+	 */
 	public static String conseguirIdAlumno(String nombre){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -676,7 +829,16 @@ public class BaseDeDatos {
 		}
 		return id;
 	}
-
+	/**Crea/Guarda el mensaje en la BD con sus respectivos atributos al Alumno
+	 * @param id String
+	 * @param idUsuario String
+	 * @param nombreProf String
+	 * @param contenido String
+	 * @param asunto String
+	 * @param tipo String
+	 * @param hora String
+	 * @param fecha String
+	 */
 	public static void mensajeAAlumno(String id, String idUsuario, String nombreAlum, String contenido, String asunto, String tipo, String hora, String fecha){
 		Connection c = initBD("data/bd.db");
 		String idAlumno = conseguirIdAlumno(nombreAlum);

@@ -1,4 +1,5 @@
 package objetos;
+//Clase para la creacion de JTable
 
 import java.util.ArrayList;
 

@@ -19,8 +19,7 @@ public class Ventana_Asignaturas extends JFrame{
 	private JPanel panel_Arriba;
 	private JPanel panel_EscuDeIdio;
 	private JTextField textField;
-	
-	
+
 	private JComboBox comboBox_1;
 	
 	

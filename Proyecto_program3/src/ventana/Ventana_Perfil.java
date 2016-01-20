@@ -368,9 +368,6 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 
 	}
 
-
-
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		Object o = arg0.getSource();
