@@ -21,6 +21,7 @@ import javax.swing.ImageIcon;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
@@ -39,6 +40,7 @@ import javax.swing.table.DefaultTableModel;
 
 import baseDeDatos.BaseDeDatos;
 import objetos.DatoParaTabla;
+import objetos.Mensaje;
 import objetos.MiTableModel;
 
 public class Ventana_Busqueda extends JFrame implements ActionListener {
@@ -420,11 +422,24 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 			public void actionPerformed(ActionEvent arg0) {
 				if (tabla.getSelectedRow() >= 0 && tabla.getSelectedRow() < datos.getRowCount() ) {
 					//TODO Coger el usuario y mandarle un mensaje
-					
-					//Para poner no editable la columna
-					//datos.setCellEditable(2, false);
-					
-					//datos.borrar( tabla.getSelectedRow());
+					String id = "0"+(Ventana_Login.getPersona().getBandejaEntrada().size() + Ventana_Login.getPersona().getEnviados().size() + 1);
+					Calendar calendario = Calendar.getInstance();
+					int hora = calendario.get(Calendar.HOUR_OF_DAY);
+					int minute = calendario.get(Calendar.MINUTE);
+					String horaEnvio = hora + ":" + minute;
+					int dia = calendario.get(Calendar.DAY_OF_MONTH);
+					int mes = calendario.get(Calendar.MONTH);
+					int anyo = calendario.get(Calendar.YEAR);
+					String fechaEnvio = dia + "/" + mes + "/" + anyo;
+					String para = (String) datos.getValueAt(tabla.getSelectedRow(), 0);
+					Mensaje mensaje = new Mensaje(id, "Peticion", BaseDeDatos.conseguirIdProfesor(para), "Quiero dar clase con usted", "Tengo interes en dar clase con usted" + txtAsignatura.getText(), horaEnvio, fechaEnvio);
+					Ventana_Login.getPersona().getEnviados().add(mensaje);
+					BaseDeDatos.mensajeAProfesor(id, Ventana_Login
+							.getPersona().getDni(), para,
+							"Tengo interes en dar clase con usted de " + txtAsignatura.getText(),
+							"Quiero dar clase con usted", "Peticion", 
+							horaEnvio, fechaEnvio);
+					datos.borrar( tabla.getSelectedRow());
 					tabla.updateUI();
 				} else {
 					JOptionPane.showMessageDialog( null, 
@@ -516,6 +531,7 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 		return "";
 	}
 	public void hacerBusqueda(){
+		clear_Tabla();
 		if (comboBox_tipo.getSelectedItem().equals("Colegio") ){
 			ArrayList<String> id_prof = BaseDeDatos.busquedaColegio(txtCiudad.getText(), txtAsignatura.getText(), comboBox_IdiomaColegio.getSelectedItem().toString(), getSelectedColegio());
 			ArrayList<String> id_nombre = BaseDeDatos.conseguirIdProfesorNombre(id_prof);
@@ -536,6 +552,12 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 			tabla.updateUI();
 		}
 	}
+    public void clear_Tabla(){
+        for (int i = 0; i < tabla.getRowCount(); i++) {
+            datos.borrar(i);
+            i-=1;
+        }
+    }
 	public static void main(String[] args) {
 		Ventana_Busqueda ventanaBusqueda = new Ventana_Busqueda();
 		ventanaBusqueda.setVisible(true);
@@ -579,5 +601,6 @@ public class Ventana_Busqueda extends JFrame implements ActionListener {
 	    		e.printStackTrace();
 	    	}
 	    }
+
 	}
 

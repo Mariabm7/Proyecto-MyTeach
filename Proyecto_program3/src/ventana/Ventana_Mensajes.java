@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 
 
 
+
+
 import java.awt.Dimension;
 
 
@@ -31,6 +33,7 @@ import javax.swing.ImageIcon;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
@@ -43,6 +46,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
+import baseDeDatos.BaseDeDatos;
 import objetos.DatoParaTabla;
 import objetos.Mensaje;
 import objetos.MiTableModel;
@@ -100,6 +104,12 @@ public class Ventana_Mensajes extends JTable {
 	private static JLabel lblAsuntoContenido;
 	private static JLabel lblMensajeContenido;
 	private static JTextArea txtMensajeContenido;
+	
+	//ArrayLists
+	private static ArrayList<Mensaje> bandejaEntrada;
+	private static ArrayList<Mensaje> enviados;
+	private static ArrayList<Mensaje> eliminar = new ArrayList<Mensaje>();
+	
 
 	public Ventana_Mensajes(MiTableModel modelo) {
 		super(modelo);
@@ -183,16 +193,31 @@ public class Ventana_Mensajes extends JTable {
 				Mensaje.atributosEditables);
 		datos2 = new MiTableModel(Mensaje.nombresAtributos,
 				Mensaje.atributosEditables);
-		// TODO insertar de la lista de mensajes
-		Persona p = new Persona();
-		// TODO cuando este Login
-		// for (Mensaje mensaje : Ventana_Login.persona.getBandejaEntrada()){
-		for (Mensaje mensaje : p.getBandejaEntrada()) {
+		
+		if (Ventana_Login.getQuien() == 1) { //ALUMNO
+			bandejaEntrada = BaseDeDatos
+					.bandejaEntradaAlumno(Ventana_Login.persona.getDni());
+			Ventana_Login.persona.setBandejaEntrada(bandejaEntrada);
+
+			enviados = BaseDeDatos.enviadosAlumno(Ventana_Login.persona
+					.getDni());
+			Ventana_Login.persona.setEnviados(enviados);
+		}else{  //PROFESOR
+			bandejaEntrada = BaseDeDatos
+					.bandejaEntradaProfesor(Ventana_Login.persona.getDni());
+			Ventana_Login.persona.setBandejaEntrada(bandejaEntrada);
+
+			enviados = BaseDeDatos.enviadosProfesor(Ventana_Login.persona
+					.getDni());
+			Ventana_Login.persona.setEnviados(enviados);
+		}
+		for (Mensaje mensaje : Ventana_Login.persona.getBandejaEntrada()){
 			datos.insertar(mensaje);
 		}
-		for (Mensaje mensaje : p.getEnviados()) {
+		for (Mensaje mensaje : Ventana_Login.persona.getEnviados()) {
 			datos2.insertar(mensaje);
 		}
+		//DATOS PRUEBA SIN USUSARIO INICIAL
 		// datos.insertar( new Peticion( "Petición", "Piruli",
 		// "Clase de hoy", "15:30", "03/12/2015", new Boolean(false) ) );
 		// datos.insertar( new Mensaje( "Mensaje", "Juan",
@@ -230,17 +255,20 @@ public class Ventana_Mensajes extends JTable {
 				if (bandeja) { //Con BandejaDeEntrada
 					lblDe.setText("De:  "+ datos.getValueAt(row, 1));
 					lblAsuntoContenido.setText("Asunto:  "+ datos.getValueAt(row, 2));
-					//TODO txtMensajeContenido.setText();
+					Mensaje mensaje = bandejaEntrada.get(row);
+					String contenido = BaseDeDatos.conseguirContenido(mensaje);  
+					txtMensajeContenido.setText(contenido);
 					panelBandejaEntrada.setVisible(false);
 					panel_contenido.setVisible(true);
 				}else{ //Con Enviados
 					lblDe.setText("De:  "+ datos2.getValueAt(row, 1));
 					lblAsuntoContenido.setText("Asunto:  "+ datos2.getValueAt(row, 2));
-					//TODO txtMensajeContenido.setText();
+					Mensaje mensaje = enviados.get(row);
+					String contenido = BaseDeDatos.conseguirContenido(mensaje);
+					txtMensajeContenido.setText(contenido);
 					panelBandejaEntrada.setVisible(false);
 					panel_contenido.setVisible(true);
 				}
-				
 			}
 		});
 		scrollPane = new JScrollPane(tabla);
@@ -278,19 +306,22 @@ public class Ventana_Mensajes extends JTable {
 						if (bandeja) { //Con BandejaDeEntrada
 							for (int i = datos.getRowCount() - 1; i >= 0; i--) {
 								if ((boolean) datos.getValueAt(i, 5)) {
-									// TODO Borrar en el arraylist y en la base de datos
 									datos.borrar(i);
+									eliminar.add(bandejaEntrada.get(i));
+									bandejaEntrada.remove(i);
+									
 								}
 							}
 						}else{ //Con Enviados
 							for (int i = datos2.getRowCount() - 1; i >= 0; i--) {
 								if ((boolean) datos2.getValueAt(i, 5)) {
-									// TODO Borrar en el arraylist y en la base de datos
 									datos2.borrar(i);
-									
+									eliminar.add(enviados.get(i));
+									enviados.remove(i);
 								}
 							}
 						}
+						BaseDeDatos.borrarMensaje(eliminar);
 						tabla.updateUI();
 					} else {
 						JOptionPane.showMessageDialog(null,
@@ -450,8 +481,46 @@ public class Ventana_Mensajes extends JTable {
 					JOptionPane.showMessageDialog(frame,
 							"El mensaje ha sido enviado", "ENVIADO",
 							JOptionPane.INFORMATION_MESSAGE);
-					//TODO Crear la interaccion, guardar en..... , copiar en .....
-					frame.getContentPane().remove(panelNuevoMensaje);
+					if (Ventana_Login.getQuien() == 1){
+						String id = "0"+(bandejaEntrada.size() + enviados.size() + 1);
+						Calendar calendario = Calendar.getInstance();
+						int hora = calendario.get(Calendar.HOUR_OF_DAY);
+						int minute = calendario.get(Calendar.MINUTE);
+						String horaEnvio = hora + ":" + minute;
+						int dia = calendario.get(Calendar.DAY_OF_MONTH);
+						int mes = calendario.get(Calendar.MONTH);
+						int anyo = calendario.get(Calendar.YEAR);
+						String fechaEnvio = dia + "/" + mes + "/" + anyo;
+						Mensaje mensaje = new Mensaje(id, "Mensaje", BaseDeDatos.conseguirIdProfesor(txtPara.getText()), txtAsunto.getText(), txtMensaje.getText(), horaEnvio, fechaEnvio);
+						enviados.add(mensaje);
+						datos2.insertar(mensaje);
+						BaseDeDatos.mensajeAProfesor(id, Ventana_Login
+								.getPersona().getDni(), txtPara.getText(),
+								txtMensaje.getText(), txtAsunto.getText(),
+								"Mensaje", horaEnvio, fechaEnvio);
+						
+					} else { //Profesor
+						String id = ((bandejaEntrada.size() + enviados.size()) + 1)
+								+ "";
+						Calendar calendario = Calendar.getInstance();
+						int hora = calendario.get(Calendar.HOUR_OF_DAY);
+						int minute = calendario.get(Calendar.MINUTE);
+						String horaEnvio = hora + ":" + minute;
+						int dia = calendario.get(Calendar.DAY_OF_MONTH);
+						int mes = calendario.get(Calendar.MONTH);
+						int anyo = calendario.get(Calendar.YEAR);
+						String fechaEnvio = dia + "/" + mes + "/" + anyo;
+						Mensaje mensaje = new Mensaje(id, "Mensaje", BaseDeDatos.conseguirIdAlumno(txtPara.getText()), txtAsunto.getText(), txtMensaje.getText(), horaEnvio, fechaEnvio);
+						enviados.add(mensaje);
+						datos2.insertar(mensaje);
+						BaseDeDatos.mensajeAAlumno(id, Ventana_Login
+								.getPersona().getDni(), txtPara.getText(),
+								txtMensaje.getText(), txtAsunto.getText(),
+								"Mensaje", horaEnvio, fechaEnvio);
+					}
+					txtPara.setText("");
+					txtAsunto.setText("");
+					txtMensaje.setText("");
 					frame.getContentPane().add(panelBandejaEntrada);
 					frame.getContentPane().repaint();
 				}
@@ -472,7 +541,7 @@ public class Ventana_Mensajes extends JTable {
 		
 		lblAsuntoContenido = new JLabel("Asunto:"); //+Asunto
 		lblAsuntoContenido.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblAsuntoContenido.setBounds(28, 108, 207, 14);
+		lblAsuntoContenido.setBounds(28, 108, 350, 30);
 		panel_contenido.add(lblAsuntoContenido);
 		
 		lblMensajeContenido = new JLabel("Mensaje:");

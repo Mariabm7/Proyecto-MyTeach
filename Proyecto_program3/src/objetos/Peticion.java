@@ -1,16 +1,18 @@
 package objetos;
 
 public class Peticion extends Mensaje{
-
 	
-	public Peticion(String tipo, String de, String asunto, String contenido,
-			String hora, String fecha, boolean eliminar) {
-		super(tipo, de, asunto, contenido, hora, fecha, eliminar);
+	
+
+
+	public Peticion(String id, String tipo, String de, String asunto,
+			String contenido, String hora, String fecha) {
+		super(id, tipo, de, asunto, contenido, hora, fecha);	
 	}
 
-	public Peticion(String tipo, String para, String de, String asunto,
-			String contenido, String hora, String fecha) {
-		super(tipo, para, de, asunto, contenido, hora, fecha);
+	public Peticion(String tipo, String de, String asunto, String contenido,
+			String hora, String fecha) {
+		super(tipo, de, asunto, contenido, hora, fecha);
 	}
 
 	public Peticion() {

@@ -8,7 +8,9 @@ import java.awt.BorderLayout;
 import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JSeparator;
@@ -16,6 +18,7 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 
@@ -35,8 +38,7 @@ import javax.swing.JPasswordField;
 
 import baseDeDatos.BaseDeDatos;
 import objetos.Persona;
-//Ventana base, para que todas tengan la misma estructura
-//Copiar Pegar
+
 public class Ventana_Perfil extends JFrame implements ActionListener {
 
 	/**
@@ -45,7 +47,7 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel panel;
-	
+
 	private JButton btnBusqueda;
 	private JButton btnPerfil;
 	private JButton btnMensaje;
@@ -72,10 +74,10 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 	private JTextField txtCiudad;
 	private JTextField txtDni;
 	private JTextField txtUsuario;
-	
+
 	private JPasswordField pwdContrasena1;
 	private JPasswordField pwdContrasena2;
-	
+
 	private JLabel lblApellido1;
 	private JLabel lblApellido2;
 	private JLabel lblNombre;
@@ -98,15 +100,16 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 	private String telefono;
 	private String idUsuario;
 	private String contrasena;
-	
+
 	private JFileChooser fcExaminar;
 
 	private Persona p;
+
 	
-	//TODO Mirar si es mejor pasarle la identificación de ambos usuarios(el del perfil y el que lo mira)
 	public Ventana_Perfil() {
+
 		p = Ventana_Login.getPersona();
-		
+
 		this.nombre = p.getNombre();
 		this.apellido1 = p.getApellido1();
 		this.apellido2 = p.getApellido2();
@@ -167,7 +170,7 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		getContentPane().add(this.lblNombre);
 
 		this.lblFoto = new JLabel();
-		this.lblFoto.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/Perfil.png")));
+		colocarFoto();
 		this.lblFoto.setBounds(187, 65, 128, 146);
 		getContentPane().add(this.lblFoto);
 
@@ -178,7 +181,7 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		this.txtFechaDeNacimiento = new JTextField(fechaNacimiento);
 		this.txtFechaDeNacimiento.setEditable(false);
 		this.txtFechaDeNacimiento.setBorder(null);
-		this.txtFechaDeNacimiento.setBounds(485, 172, 136, 22);
+		this.txtFechaDeNacimiento.setBounds(485, 172, 140, 22);
 		getContentPane().add(this.txtFechaDeNacimiento);
 		this.txtFechaDeNacimiento.setColumns(10);
 
@@ -198,7 +201,6 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		this.txtTelefono.setColumns(10);
 
 		this.btnEditarNombre = new JButton("");
-		this.btnEditarNombre.addActionListener(this);
 		this.btnEditarNombre.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/iconoEditar.png")));
 		this.btnEditarNombre.setOpaque(false);
 		this.btnEditarNombre.setContentAreaFilled(false);
@@ -208,7 +210,6 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		this.btnEditarNombre.addActionListener(this);
 
 		this.btnEditarEdad = new JButton("");
-		this.btnEditarEdad.addActionListener(this);
 		this.btnEditarEdad.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/iconoEditar.png")));
 		this.btnEditarEdad.setOpaque(false);
 		this.btnEditarEdad.setContentAreaFilled(false);
@@ -218,7 +219,6 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		this.btnEditarEdad.addActionListener(this);
 
 		this.btnEditarCiudad = new JButton("");
-		btnEditarCiudad.addActionListener(this);
 		this.btnEditarCiudad.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/iconoEditar.png")));
 		this.btnEditarCiudad.setOpaque(false);
 		this.btnEditarCiudad.setContentAreaFilled(false);
@@ -228,7 +228,6 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		this.btnEditarCiudad.addActionListener(this);
 
 		this.btnEditarTelefono = new JButton("");
-		this.btnEditarTelefono.addActionListener(this);
 		this.btnEditarTelefono.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/iconoEditar.png")));
 		this.btnEditarTelefono.setOpaque(false);
 		this.btnEditarTelefono.setContentAreaFilled(false);
@@ -238,7 +237,6 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		this.btnEditarTelefono.addActionListener(this);
 
 		this.btnEditarFoto = new JButton("");
-		btnEditarFoto.addActionListener(this);
 		this.btnEditarFoto.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/iconoEditar.png")));
 		this.btnEditarFoto.setOpaque(false);
 		this.btnEditarFoto.setContentAreaFilled(false);
@@ -256,7 +254,6 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		getContentPane().add(this.lblApellido2);
 
 		this.btnEditarApellido2 = new JButton("");
-		this.btnEditarApellido2.addActionListener(this);
 		this.btnEditarApellido2.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/iconoEditar.png")));
 		this.btnEditarApellido2.setOpaque(false);
 		this.btnEditarApellido2.setContentAreaFilled(false);
@@ -264,10 +261,9 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		this.btnEditarApellido2.setBounds(638, 107, 23, 23);
 		getContentPane().add(this.btnEditarApellido2);
 		this.btnEditarApellido2.addActionListener(this);
-		
-		
+
+
 		this.btnEditarApellido1 = new JButton("");
-		this.btnEditarApellido1.addActionListener(this);
 		this.btnEditarApellido1.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/iconoEditar.png")));
 		this.btnEditarApellido1.setOpaque(false);
 		this.btnEditarApellido1.setContentAreaFilled(false);
@@ -275,63 +271,65 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		this.btnEditarApellido1.setBounds(638, 77, 23, 23);
 		getContentPane().add(btnEditarApellido1);
 		this.btnEditarApellido1.addActionListener(this);
-		
+
 		this.btnGuardarCambios = new JButton("Guardar cambios");
-		this.btnGuardarCambios.addActionListener(this);
 		this.btnGuardarCambios.setBounds(485, 358, 141, 25);
 		getContentPane().add(this.btnGuardarCambios);
-		
+		this.btnGuardarCambios.addActionListener(this);
+
 		this.txtCiudad = new JTextField(this.ciudad);
-		this.txtCiudad.setBounds(426, 204, 200, 22);
 		this.txtCiudad.setEditable(false);
+		this.txtCiudad.setBounds(426, 204, 200, 22);
 		this.txtCiudad.setBorder(null);
 		getContentPane().add(txtCiudad);
-		
+
 		this.txtApellido2 = new JTextField(apellido2);
 		this.txtApellido2.setEditable(false);
 		this.txtApellido2.setBounds(426, 108, 200, 22);
 		this.txtApellido2.setBorder(null);
 		getContentPane().add(txtApellido2);
 		this.txtApellido2.setColumns(10);
-		
+
 		this.txtApellido1 = new JTextField(apellido1);
 		this.txtApellido1.setEditable(false);
 		this.txtApellido1.setBounds(426, 81, 200, 22);
 		this.txtApellido1.setBorder(null);
 		getContentPane().add(txtApellido1);
 		this.txtApellido1.setColumns(10);
-		
+
 		lblUsusario = new JLabel("Usuario");
-		lblUsusario.setBounds(187, 270, 49, 22);
+		lblUsusario.setBounds(187, 270, 49, 20);
 		getContentPane().add(lblUsusario);
-		
+
 		txtUsuario = new JTextField(idUsuario);
 		txtUsuario.setEditable(false);
 		txtUsuario.setColumns(10);
 		txtUsuario.setBorder(null);
-		txtUsuario.setBounds(246, 270, 137, 22);
+		txtUsuario.setBounds(246, 270, 137, 20);
 		getContentPane().add(txtUsuario);
-		
+
 		lblContrasena1 = new JLabel("Contrase\u00F1a");
-		lblContrasena1.setBounds(187, 303, 78, 22);
+		lblContrasena1.setBounds(187, 303, 78, 20);
 		getContentPane().add(lblContrasena1);
-		
+
 		pwdContrasena1 = new JPasswordField(contrasena);
 		this.pwdContrasena1.setEditable(false);
-		pwdContrasena1.setBounds(256, 303, 121, 20);
+		this.pwdContrasena1.setBorder(null);
+		this.pwdContrasena1.setBounds(256, 303, 121, 20);
 		getContentPane().add(pwdContrasena1);
-		
+
 		lblContrasena2 = new JLabel("Repetir contrase\u00F1a");
 		this.lblContrasena2.setVisible(false);
 		lblContrasena2.setBounds(421, 303, 126, 22);
 		getContentPane().add(lblContrasena2);
-		
+
 		pwdContrasena2 = new JPasswordField(contrasena);
 		this.pwdContrasena2.setVisible(false);
+		this.pwdContrasena2.setBorder(null);
 		pwdContrasena2.setBounds(540, 304, 121, 20);
 		getContentPane().add(pwdContrasena2);
-		
-		
+
+
 		btnEditarContrasena = new JButton("");
 		btnEditarContrasena.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/iconoEditar.png")));
 		btnEditarContrasena.setOpaque(false);
@@ -340,7 +338,7 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		btnEditarContrasena.addActionListener(this);
 		btnEditarContrasena.setBounds(387, 303, 23, 22);
 		getContentPane().add(btnEditarContrasena);
-		
+
 		btnEditarUsuario = new JButton("");
 		btnEditarUsuario.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/iconoEditar.png")));
 		btnEditarUsuario.setOpaque(false);
@@ -349,27 +347,30 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		btnEditarUsuario.addActionListener(this);
 		btnEditarUsuario.setBounds(393, 269, 23, 23);
 		getContentPane().add(btnEditarUsuario);
-		
+
 		lblDni = new JLabel("DNI");
 		lblDni.setBounds(342, 141, 41, 22);
 		getContentPane().add(lblDni);
-		
+
 		txtDni = new JTextField(dni);
 		txtDni.setEditable(false);
 		txtDni.setColumns(10);
 		txtDni.setBorder(null);
 		txtDni.setBounds(421, 142, 200, 22);
 		getContentPane().add(txtDni);
-		
-		
+
+
 		this.btnGuardarCambios.addActionListener(this);
-		
 		this.btnAtras.addActionListener(this);
 		this.fcExaminar = new JFileChooser();
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("Imágenes jpg, ico y png", "jpg", "png", "ico");
 		this.fcExaminar.setFileFilter(filtro);
-	
+
 	}
+
+
+
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		Object o = arg0.getSource();
@@ -377,8 +378,6 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 			Ventana_Busqueda ventanaBusqueda = new Ventana_Busqueda();
 			ventanaBusqueda.setVisible(true);
 			this.setVisible(false);
-		}else if ( o == btnPerfil ){
-			 //TODO los datos se tienen que mantener en un logeo estático (la id del usuario y contra o  algo)
 		}else if (o == btnMensaje){
 			Ventana_Mensajes.crearYMostrarGUI();
 			this.setVisible(false);
@@ -386,7 +385,6 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 			Ventana_Login ventanaLogin = new Ventana_Login();
 			ventanaLogin.setVisible(true);
 			this.setVisible(false);
-			
 		}else if(o == btnEditarNombre){
 			this.txtNombre.setEditable(true);
 		}else if(o == btnEditarApellido1){
@@ -396,11 +394,13 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 		}else if(o == btnEditarEdad){
 			this.txtFechaDeNacimiento.setEditable(true);
 		}else if(o == btnEditarCiudad){
-			this.txtCiudad.setVisible(true);
+			this.txtCiudad.setEditable(true);
 		}else if(o == btnEditarTelefono){
 			this.txtTelefono.setEditable(true);
 		}else if(o == btnEditarUsuario){
 			this.txtUsuario.setEditable(true);
+		}else if(o == btnEditarCiudad){
+			this.txtCiudad.setEditable(true);
 		}else if(o == btnEditarContrasena){
 			this.pwdContrasena1.setEditable(true);
 			this.lblContrasena2.setVisible(true);
@@ -410,9 +410,10 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 			if (opcion == 0){
 				String path = fcExaminar.getSelectedFile().getAbsolutePath();
 				ImageIcon image = new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(140, 150, Image.SCALE_DEFAULT));
+				this.guardarImagen(image, p);
 				this.lblFoto.setIcon(image);
 			}
-			
+
 		}else if(o == btnGuardarCambios){
 			if(txtNombre.getText().equals("") || txtApellido1.getText().equals("")|| txtApellido2.getText().equals("")|| txtDni.getText().equals("")
 					|| txtCiudad.getText().equals("")|| txtUsuario.getText().equals("") || !pwdContrasena1.getText().equals(pwdContrasena2.getText())){
@@ -421,7 +422,7 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 					.showMessageDialog(
 							Ventana_Perfil.this,
 							"Las contraseñas no coinciden",
-							"Contraseña erroneo",
+							"Contraseña erronea",
 							JOptionPane.ERROR_MESSAGE);
 				}else{
 					JOptionPane
@@ -441,10 +442,10 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 				this.txtTelefono.setEditable(false);
 				this.txtUsuario.setEditable(false);
 				this.pwdContrasena1.setEditable(false);
-			
+
 				this.pwdContrasena2.setVisible(false);
 				this.lblContrasena2.setVisible(false);
-				
+
 				p.setNombre(txtNombre.getText());
 				p.setApellido1(txtApellido1.getText());
 				p.setApellido2(txtApellido2.getText());
@@ -455,7 +456,6 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 				p.setUserName(txtUsuario.getText());
 				p.setPassword(pwdContrasena2.getText());
 				Ventana_Login.setPersona(p);
-				//TODO guardar datos en base de datos
 				if (Ventana_Login.getQuien() == 1){
 					BaseDeDatos.guardarAlumno(Ventana_Login.getPersona());
 				}else{
@@ -464,7 +464,52 @@ public class Ventana_Perfil extends JFrame implements ActionListener {
 			}
 		}
 	}
+	public static BufferedImage toBufferedImage(Image img)
+	{
+		if (img instanceof BufferedImage)
+		{
+			return (BufferedImage) img;
+		}
 
+		// Create a buffered image with transparency
+		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+		// Draw the image on to the buffered image
+		Graphics2D bGr = bimage.createGraphics();
+		bGr.drawImage(img, 0, 0, null);
+		bGr.dispose();
+
+		// Return the buffered image
+		return bimage;
+	}
+	private void guardarImagen (ImageIcon foto, Persona persona){
+		try{
+			BufferedImage bf =  toBufferedImage(foto.getImage());
+
+			File outputfile = new File("../MyTeach/data/imagenes perfil/" + persona.getDni().toString() + ".png").getAbsoluteFile();
+			if (outputfile.delete()){
+				System.out.println("El fichero ha sido borrado satisfactoriamente");
+			}else{
+				System.out.println("El fichero no puede ser borrado");
+			}
+			ImageIO.write(bf, "png", outputfile);
+			System.out.println("Nueva imagen guardada");
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		colocarFoto();
+	}
+	private void colocarFoto(){
+	
+	File file = new File("data/imagenes perfil/"+p.getDni()+".png");
+	String absolutePath = file.getAbsolutePath();
+	System.out.println(absolutePath);
+	if(absolutePath != null){
+		this.lblFoto.setIcon(new ImageIcon(absolutePath));
+	}else{
+		this.lblFoto.setIcon(new ImageIcon(Ventana_Perfil.class.getResource("/imagenes/Perfil.png")));
+	}
+}
 	public static void main(String[] args) {
 		Ventana_Perfil ventanaPerfil = new Ventana_Perfil(); 
 		ventanaPerfil.setVisible(true);

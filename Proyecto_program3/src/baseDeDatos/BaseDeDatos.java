@@ -9,7 +9,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import objetos.Mensaje;
 import objetos.Persona;
+import ventana.Ventana_Login;
 
 /** Métodos útiles para base de datos.
  * Clase con métodos estáticos para gestionar una sola base de datos
@@ -140,7 +142,6 @@ public class BaseDeDatos {
 
 		try {
 			PreparedStatement s = c.prepareStatement("UPDATE alumnos SET nombre = ?, apellido1 = ?, apellido2 = ?, ciudad = ?, telefono = ?, usuario = ?, contrasena = ? WHERE id = ?");
-//TODO En la clase Ventana_Perfil hacer set para coger directamente con get ya cambiadas
 			s.setString(1, p.getNombre());
 			s.setString(2, p.getApellido1());
 			s.setString(3, p.getApellido2());
@@ -163,7 +164,6 @@ public class BaseDeDatos {
 
 		try {
 			PreparedStatement s = c.prepareStatement("UPDATE profesor SET nombre = ?, apellido1 = ?, apellido2 = ?, ciudad = ?, telefono = ?, usuario = ?, contrasena = ? WHERE id = ?");
-//TODO En la clase Ventana_Perfil hacer set para coger directamente con get ya cambiadas
 			s.setString(1, p.getNombre());
 			s.setString(2, p.getApellido1());
 			s.setString(3, p.getApellido2());
@@ -241,7 +241,7 @@ public class BaseDeDatos {
 			persona.setTelefono(rs.getString("telefono"));
 			persona.setUserName(usuario);
 			persona.setPassword(contrasena);
-			persona.setFechaNacimiento("fechaNcto");
+			persona.setFechaNacimiento(rs.getString("fechaNcto"));
 			s1.close();
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -266,7 +266,7 @@ public class BaseDeDatos {
 			persona.setTelefono(rs.getString("telefono"));
 			persona.setUserName(usuario);
 			persona.setPassword(contrasena);
-			persona.setFechaNacimiento("fechaNcto");
+			persona.setFechaNacimiento(rs.getString("fechaNcto"));
 			s1.close();
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -344,6 +344,7 @@ public class BaseDeDatos {
 	
 	private ArrayList<String> prof_nombre;
 	private ArrayList<String> prof_Apellido;
+
 	public static ArrayList<String> conseguirIdProfesorNombre(ArrayList<String> id_prof){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
@@ -380,59 +381,275 @@ public class BaseDeDatos {
 		}
 		return apellidos;
 	}
+	
 	//Ventana_Mensaje
 	//TODO mensajes bandeja de entrada y enviados
-	public static String conseguirIdAlumno(String usuario){
+	
+	//Bandeja de entrada
+	
+	public static ArrayList<String> conseguirIdRecibidos(String idUsuario){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
 		ResultSet rs = null;
+		ArrayList<String>idRecibidos = new ArrayList<String>();
 		try {
-			s = c.prepareStatement("SELECT id FROM alumnos WHERE usuario = ?"); 
-			s.setString(1, usuario);
+			s = c.prepareStatement("SELECT id FROM mensajes WHERE id_recibe = ?"); 
+			s.setString(1, idUsuario);
 			rs = s.executeQuery();
+			while (rs.next()){
+				idRecibidos.add(rs.getString("id"));
+			}
 			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 
 		}
-		try {
-			return rs.getString("id");
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return idRecibidos;
 	}
-	public static String conseguirIdProfesor(String usuario){
+	
+	public static ArrayList<Mensaje> bandejaEntradaAlumno(String idUsuario){
 		Connection c = initBD("data/bd.db");
 		PreparedStatement s = null;
 		ResultSet rs = null;
+		ArrayList<String> idRecibidos = conseguirIdRecibidos(idUsuario);
+		ArrayList<Mensaje> mensajesRecibidos = new ArrayList<Mensaje>();
+		String nombre;
+		String idProfesor;
 		try {
-			s = c.prepareStatement("SELECT id FROM profesor WHERE usuario = ?"); 
-			s.setString(1, usuario);
+			for (String id : idRecibidos) {
+				s = c.prepareStatement("SELECT id_envia, contenido, asunto, tipo, hora, fecha FROM mensajes WHERE id = ?");
+				s.setString(1, id);
+				rs = s.executeQuery();
+				idProfesor = rs.getString("id_envia");
+				nombre = conseguirNombreProfesor(idProfesor);
+				while(rs.next()){
+					mensajesRecibidos.add(new Mensaje(id, rs.getString("tipo"), nombre , rs.getString("asunto"), rs.getString("contenido"), rs.getString("hora"), rs.getString("fecha")));
+				}
+			}
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return mensajesRecibidos;
+	}
+	public static ArrayList<Mensaje> bandejaEntradaProfesor(String idUsuario){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		ArrayList<String> idRecibidos = conseguirIdRecibidos(idUsuario);
+		ArrayList<Mensaje> mensajesRecibidos = new ArrayList<Mensaje>();
+		String nombre;
+		String idAlumno;
+		try {
+			for (String id : idRecibidos) {
+				s = c.prepareStatement("SELECT id_envia, contenido, asunto, tipo, hora, fecha FROM mensajes WHERE id = ?");
+				s.setString(1, id);
+				rs = s.executeQuery();
+				idAlumno = rs.getString("id_envia");
+				nombre = conseguirNombreAlumno(idAlumno);
+				while(rs.next()){
+					mensajesRecibidos.add(new Mensaje(id, rs.getString("tipo"), nombre , rs.getString("asunto"), rs.getString("contenido"), rs.getString("hora"), rs.getString("fecha")));
+				}
+			}
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return mensajesRecibidos;
+	}
+	
+	//Enviados
+	public static ArrayList<String> conseguirIdEnviados(String idUsuario){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		ArrayList<String>idEnviados = new ArrayList<String>();
+		try {
+			s = c.prepareStatement("SELECT id FROM mensajes WHERE id_envia = ?"); 
+			s.setString(1, idUsuario);
 			rs = s.executeQuery();
+			while (rs.next()){
+				idEnviados.add(rs.getString("id"));
+			}
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+		return idEnviados;
+	}
+	
+	
+	
+	public static ArrayList<Mensaje> enviadosAlumno(String idUsuario){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		ArrayList<String> idEnviados = conseguirIdEnviados(idUsuario);
+		ArrayList<Mensaje> mensajesEnviados = new ArrayList<Mensaje>();
+		String nombre;
+		String idProfesor;
+		try {
+			for (String id : idEnviados) {
+				s = c.prepareStatement("SELECT id_recibe, contenido, asunto, tipo, hora, fecha FROM mensajes WHERE id = ?");
+				s.setString(1, id);
+				rs = s.executeQuery();
+				
+				while (rs.next()) {
+					idProfesor = rs.getString("id_recibe");
+					nombre = conseguirNombreProfesor(idProfesor);
+					mensajesEnviados.add(new Mensaje(id, rs.getString("tipo"),
+							nombre, rs.getString("asunto"), rs
+									.getString("contenido"), rs
+									.getString("hora"), rs.getString("fecha")));
+				}
+			}
 			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return mensajesEnviados;
+	}
+	public static ArrayList<Mensaje> enviadosProfesor(String idUsuario){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		ArrayList<String> idEnviados = conseguirIdEnviados(idUsuario);
+		ArrayList<Mensaje> mensajesEnviados = new ArrayList<Mensaje>();
+		String nombre;
+		String idAlumno;
 		try {
-			return rs.getString("id");
+			for (String id : idEnviados) {
+				s = c.prepareStatement("SELECT id_recibe, contenido, asunto, tipo, hora, fecha FROM mensajes WHERE id = ?");
+				s.setString(1, id);
+				rs = s.executeQuery();
+				idAlumno = rs.getString("id_recibe");	
+				nombre = conseguirNombreAlumno(idAlumno);
+				while (rs.next()) {
+
+					mensajesEnviados.add(new Mensaje(id, rs.getString("tipo"),
+							nombre, rs.getString("asunto"), rs
+									.getString("contenido"), rs
+									.getString("hora"), rs.getString("fecha")));
+					
+				}
+			}
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return null;
+		}
+		return mensajesEnviados;
+	}
+	public static String conseguirNombreAlumno(String id){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		String nombre = null;
+		try {
+				s = c.prepareStatement("SELECT nombre FROM alumno WHERE id = ?");
+				s.setString(1, id);
+				rs = s.executeQuery();
+				nombre = rs.getString("nombre");
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return nombre;
+	}
+	
+	public static String conseguirNombreProfesor(String id){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		String nombre = null;
+		try {
+				s = c.prepareStatement("SELECT nombre FROM profesor WHERE id = ?");
+				s.setString(1, id);
+				rs = s.executeQuery();
+				while (rs.next()){
+					nombre = rs.getString("nombre");
+				}
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return nombre;
+	}
+	
+	public static String conseguirContenido(Mensaje mensaje){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		String id = mensaje.getId();
+		String contenido = null;
+		try {
+				s = c.prepareStatement("SELECT contenido FROM mensajes WHERE id = ?");
+				s.setString(1, id);
+				rs = s.executeQuery();
+				while (rs.next()){
+					contenido = rs.getString("contenido");
+				}
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return contenido;
+	}
+	
+	
+	public static void borrarMensaje (ArrayList<Mensaje> eliminar){
+		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ArrayList<String> idEliminar = new ArrayList<String>();
+		for (Mensaje mens: eliminar){
+			idEliminar.add(mens.getId());
+		}
+		try {
+			for (String id : idEliminar) {
+				s = c.prepareStatement("DELETE FROM mensajes WHERE id = ?");
+				s.setString(1, id);
+				s.executeUpdate();
+			}
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
-	public static void mensajeAProfesor(String usuarioAlum, String usuarioProf, String contenido, String asunto, String tipo){
-		String idAlumno = conseguirIdAlumno(usuarioAlum);
-		String idProfesor = conseguirIdAlumno(usuarioProf);
+	//Mandar Mensajes
+	
+	//Mensajes a enviar por el Alumno
+	public static String conseguirIdProfesor(String nombre){
 		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		String id = null;
 		try {
-			PreparedStatement s = c.prepareStatement("INSERT INTO mensaje VALUES (?,?,?,?,?)"); 
-			s.setString(1, idAlumno);
-			s.setString(2, idProfesor);
-			s.setString(3, contenido);
-			s.setString(4, asunto);
-			s.setString(5, tipo);
+				s = c.prepareStatement("SELECT id FROM profesor WHERE nombre = ?");
+				s.setString(1, nombre);
+				rs = s.executeQuery();
+				while (rs.next()){
+					id = rs.getString("id");
+				}
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+
+	public static void mensajeAProfesor(String id, String idUsuario, String nombreProf, String contenido, String asunto, String tipo, String hora, String fecha){
+		Connection c = initBD("data/bd.db");
+		String idProfesor = conseguirIdProfesor(nombreProf);
+		try {
+			PreparedStatement s = c.prepareStatement("INSERT INTO mensajes VALUES (?,?,?,?,?,?,?,?)"); 
+			s.setString(1, id);
+			s.setString(2, idUsuario);
+			s.setString(3, idProfesor);
+			s.setString(4, contenido);
+			s.setString(5, asunto);
+			s.setString(6, tipo);
+			s.setString(7, hora);
+			s.setString(8, fecha);
 			s.executeUpdate();
 			s.close();
 		} catch (SQLException e) {
@@ -440,17 +657,39 @@ public class BaseDeDatos {
 
 		}
 	}
-	public static void mensajeAAlumno(String usuarioAlum, String usuarioProf, String contenido, String asunto, String tipo){
-		String idAlumno = conseguirIdAlumno(usuarioAlum);
-		String idProfesor = conseguirIdAlumno(usuarioProf);
+	//Mensajes a enviar por el Profesor
+	public static String conseguirIdAlumno(String nombre){
 		Connection c = initBD("data/bd.db");
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		String id = null;
 		try {
-			PreparedStatement s = c.prepareStatement("INSERT INTO mensaje VALUES (?,?,?,?,?)"); 
-			s.setString(1, idProfesor);
-			s.setString(2, idAlumno);
-			s.setString(3, contenido);
-			s.setString(4, asunto);
-			s.setString(5, tipo);
+				s = c.prepareStatement("SELECT id FROM alumnos WHERE nombre = ?");
+				s.setString(1, nombre);
+				rs = s.executeQuery();
+				while (rs.next()){
+					id = rs.getString("id");
+				}
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+
+	public static void mensajeAAlumno(String id, String idUsuario, String nombreAlum, String contenido, String asunto, String tipo, String hora, String fecha){
+		Connection c = initBD("data/bd.db");
+		String idAlumno = conseguirIdAlumno(nombreAlum);
+		try {
+			PreparedStatement s = c.prepareStatement("INSERT INTO mensajes VALUES (?,?,?,?,?,?,?,?)"); 
+			s.setString(1, id);
+			s.setString(2, idUsuario);
+			s.setString(3, idAlumno);
+			s.setString(4, contenido);
+			s.setString(5, asunto);
+			s.setString(6, tipo);
+			s.setString(7, hora);
+			s.setString(8, fecha);
 			s.executeUpdate();
 			s.close();
 		} catch (SQLException e) {
@@ -458,21 +697,4 @@ public class BaseDeDatos {
 
 		}
 	}
-	public static void mensajeId(String id){
-		
-	}
-	
-	//TODO borrar mensaje de bd y buscar id de mensaje
-	public static void borrarMensaje (int id){
-		Connection c = initBD("data/bd.db");
-		try {
-			PreparedStatement s = c.prepareStatement("DELETE FROM mensaje WHERE id = ?"); 
-			s.setInt(1, id);
-			s.executeUpdate();
-			s.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
 }

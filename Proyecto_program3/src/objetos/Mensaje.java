@@ -3,6 +3,7 @@ package objetos;
 import java.io.ObjectInputStream.GetField;
 
 public class Mensaje implements DatoParaTabla{
+	private String id;
 	private String tipo;
 	private String para;
 	private String de;
@@ -16,28 +17,40 @@ public class Mensaje implements DatoParaTabla{
 		"Tipo", "De", "Asunto", "Hora", "Fecha", "Eliminar" };
 	public static boolean[] atributosEditables = new boolean[] {
 		false, false, false, false, false, true };
-	public Mensaje(String tipo, String para, String de, String asunto, String contenido,
-			String hora, String fecha) {
-		super();
-		this.tipo =tipo;
-		this.para = para;
-		this.de = de;
-		this.asunto = asunto;
-		this.contenido = contenido;
-		this.hora = hora;
-		this.fecha = fecha;
-	}
-	public Mensaje(String tipo ,String de, String asunto, String contenido, String hora, String fecha, boolean eliminar){
+//	public Mensaje(String tipo, String para, String de, String asunto, String contenido,
+//			String hora, String fecha) {
+//		super();
+//		this.tipo =tipo;
+//		this.para = para;
+//		this.de = de;
+//		this.asunto = asunto;
+//		this.contenido = contenido;
+//		this.hora = hora;
+//		this.fecha = fecha;
+//	}
+	public Mensaje(String tipo ,String de, String asunto, String contenido, String hora, String fecha){
 		this.tipo = tipo;
 		this.de = de;
 		this.asunto = asunto;
 		this.contenido = contenido;
 		this.hora = hora;
 		this.fecha = fecha;
-		this.eliminar = eliminar;
 	}
+	
 	public Mensaje(){}
 	
+	public Mensaje(String id, String tipo, String de, String asunto,
+			String contenido, String hora, String fecha) {
+		super();
+		this.id = id;
+		this.tipo = tipo;
+		this.de = de;
+		this.asunto = asunto;
+		this.contenido = contenido;
+		this.hora = hora;
+		this.fecha = fecha;
+	}
+
 	public String getTipo(Mensaje mensaje) {
 		if ( mensaje instanceof Peticion ){
 			tipo = "Peticio9n";
@@ -87,10 +100,16 @@ public class Mensaje implements DatoParaTabla{
 	public void setFecha(String fecha) {
 		this.fecha = fecha;
 	}
-	
+		public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	
 	//Metodos de la interfaz
 	
+
 	@Override
 	public int getNumColumnas() {
 		return 6;
